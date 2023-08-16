@@ -1,0 +1,83 @@
+﻿@model CourseSeller.Core.DTOs.UserPanel.EditProfileViewModel
+@{
+    ViewData["Title"] = "ویرایش پروفایل";
+}
+
+
+<partial name="_AddressBarStart" />
+ویرایش پروفایل
+<partial name="_AddressBarFinish" />
+
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+
+                <partial name="_SideBar" model="@Model.SideBarViewModel" />
+
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1> ویرایش حساب کاربری </h1></header>
+                        <div class="inner form-layer">
+                            <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                                @if (ViewData["IsSuccess"] != null)
+                                {
+                                    <div class="alert alert-success">
+                                        اطلاعات شما با موفقیت ویرایش شد.
+                                    </div>
+                                }
+
+                                <input type="hidden" name="OldEmail" value="@Model.Email" />
+                                <input type="hidden" name="OldUserName" value="@Model.UserName" />
+                                <input type="hidden" asp-for="AvatarName" />
+
+                                <div class="row">
+                                    <style>
+                                        .margin-bot {
+                                            margin-bottom: 5%;
+                                        }
+                                    </style>
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="username"><i class="zmdi zmdi-account"></i></span>
+                                            <input asp-for="UserName" type="text" class="form-control" placeholder="نام کاربری" aria-describedby="username">
+                                        </div>
+                                        <span asp-validation-for="UserName" class="text-danger margin-bot"></span>
+
+                                    </div>
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                                            <input asp-for="Email" type="text" class="form-control" placeholder="ایمیل" aria-describedby="email-address">
+                                        </div>
+                                        <span asp-validation-for="Email" class="text-danger margin-bot"></span>
+
+                                    </div>
+                                    <div class="col-md-7 col-sm-8 col-xs-12" style="margin-bottom: 4%">
+                                        <p class="help-block">آواتار</p>
+                                        <input asp-for="UserAvatar" type="file" style="margin-bottom: 2%">
+                                        <img src="/UserAvatars/@Model.AvatarName" class="thumbnail" style="max-width: 150px" />
+                                        <span asp-validation-for="UserAvatar" class="text-danger"></span>
+
+                                    </div>
+
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <button class="btn btn-success"> ویرایش اطلاعات </button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
