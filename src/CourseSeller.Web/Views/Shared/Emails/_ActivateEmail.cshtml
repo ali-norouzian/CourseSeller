@@ -1,0 +1,11 @@
+﻿@model CourseSeller.DataLayer.Entities.Users.User
+
+
+<div style="direction: rtl !important; margin: 2%">
+    <h2>@Model.UserName عزیز!</h2>
+    <p>ثبت نام شما در سایت @conf["SiteName"] با موفقیت انجام شد.</p>
+    <p>جهت ادامه کار می بایست حساب کاربری خود را فعال کنید.</p>
+    <form action="@conf["DomainLink"]/Account/Activate/@Model.UserId/@Model.ActiveCode/" method="get">
+        <button style="background-color: greenyellow">فعالسازی حساب</button>
+    </form>
+</div>

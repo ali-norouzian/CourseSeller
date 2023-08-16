@@ -9,18 +9,26 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using CourseSeller.Core.Senders;
+using CourseSeller.DataLayer.Contexts;
+using Hangfire;
+using CourseSeller.Core.Services;
 
 namespace CourseSeller.Web.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
-        private readonly IConfiguration _conf;
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly ISendEmail _sendEmail;
+        private readonly IViewRenderService _viewRender;
 
-        public AccountController(IAccountService accountService, IConfiguration conf)
+        public AccountController(IAccountService accountService, IBackgroundJobClient backgroundJobClient, ISendEmail sendEmail, IViewRenderService viewRender)
         {
             _accountService = accountService;
-            _conf = conf;
+            _backgroundJobClient = backgroundJobClient;
+            _sendEmail = sendEmail;
+            _viewRender = viewRender;
         }
 
 
@@ -55,7 +63,7 @@ namespace CourseSeller.Web.Controllers
             if (errorFlag) { return View(viewModel); }
 
             // register 
-            User user = new User()
+            User user = new()
             {
                 UserId = CodeGenerators.Generate32ByteUniqueCode(),
                 ActiveCode = CodeGenerators.Generate64ByteUniqueCode(),
@@ -72,9 +80,9 @@ namespace CourseSeller.Web.Controllers
 
             #region Send Activate Email
 
-            //string body = _viewRender.RenderToStringAsync("Emails/_ActivateEmail", user);
-            //_backgroundJobClient.Enqueue(() =>
-            //    _sendEmail.Send(user.Email, "فعالسازی", body));
+            string body = _viewRender.RenderToStringAsync("Emails/_ActivateEmail", user);
+            _backgroundJobClient.Enqueue(() =>
+                _sendEmail.Send(user.Email, "فعالسازی", body));
 
             #endregion
 
@@ -172,6 +180,88 @@ namespace CourseSeller.Web.Controllers
         public async Task<IActionResult> Logout(string id)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        #endregion
+
+
+        #region Forgot Password
+
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel viewModel)
+        {
+            bool errorFlag = false;
+            if (!ModelState.IsValid)
+                errorFlag = true;
+
+            string fixedEmail = FixText.FixEmail(viewModel.Email);
+            User user = await _accountService.GetUserByEmail(fixedEmail);
+            if (user == null)
+            {
+                ModelState.AddModelError("Email", "کاربری یافت نشد.");
+                errorFlag = true;
+            }
+
+            if (errorFlag) { return View(viewModel); }
+
+            await _accountService.RevokeActiveCodeAndNewSendEmail(user, "Emails/_ForgotPassword", "بازیابی حساب کاربری");
+            ViewData["IsSuccess"] = true;
+
+            return View();
+        }
+
+
+        #endregion
+
+
+        #region Reset Password
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("[controller]/[action]/{userId?}/{activeCode?}")]
+        public IActionResult ResetPassword(string userId, string activeCode)
+        {
+            return View(new ResetPasswordViewModel()
+            {
+                UserId = userId,
+                ActiveCode = activeCode,
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("[controller]/[action]/{userId?}/{activeCode?}")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel viewModel)
+        {
+            bool errorFlag = !ModelState.IsValid;
+
+            User user = await _accountService.GetUserByActiveCode(viewModel.UserId, viewModel.ActiveCode);
+            if (user == null)
+            {
+                ModelState.AddModelError("Password", "لینک شما منقضی شده است. لینک جدید برای شما ارسال شد.");
+                errorFlag = true;
+            }
+
+            if (errorFlag) { return View(viewModel); }
+
+            // This will reset it and expire used token.
+            await _accountService.ResetPassword(user, viewModel.Password);
+
+            string body = _viewRender.RenderToStringAsync("Emails/_PasswordChanged", user);
+            _backgroundJobClient.Enqueue(() =>
+                _sendEmail.Send(user.Email, "تغییر رمز عبور", body));
+
+            TempData["ResetPasswordIsSuccess"] = true;
+
 
             return RedirectToAction(nameof(Login));
         }

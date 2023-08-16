@@ -1,7 +1,11 @@
-﻿using CourseSeller.Core.Generators;
+﻿using CourseSeller.Core.Convertors;
+using CourseSeller.Core.Generators;
+using CourseSeller.Core.Security;
+using CourseSeller.Core.Senders;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Users;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -16,11 +20,17 @@ public class AccountService : IAccountService
 
     private readonly MssqlContext _context;
     private readonly IConfiguration _conf;
+    private readonly IBackgroundJobClient _backgroundJobClient;
+    private readonly ISendEmail _sendEmail;
+    private readonly IViewRenderService _viewRender;
 
-    public AccountService(MssqlContext context, IConfiguration conf)
+    public AccountService(MssqlContext context, IConfiguration conf, IBackgroundJobClient backgroundJobClient, ISendEmail sendEmail, IViewRenderService viewRender)
     {
         _context = context;
         _conf = conf;
+        _backgroundJobClient = backgroundJobClient;
+        _sendEmail = sendEmail;
+        _viewRender = viewRender;
     }
 
     public async Task<bool> IsExistUserName(string userName)
@@ -37,7 +47,6 @@ public class AccountService : IAccountService
     {
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-
         return user;
     }
 
@@ -45,7 +54,6 @@ public class AccountService : IAccountService
     {
         return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
     }
-
     public async Task<User> GetUserByUserName(string userName)
     {
         return await _context.Users.SingleOrDefaultAsync(u => u.UserName == userName);
@@ -93,9 +101,9 @@ public class AccountService : IAccountService
         user.ActiveCodeGenerateDateTime = DateTime.Now;
         await UpdateUser(user);
 
-        //string body = _viewRender.RenderToStringAsync(emailBody, user);
-        //_backgroundJobClient.Enqueue(() =>
-        //    _sendEmail.Send(user.Email, emailSubject, body));
+        string body = _viewRender.RenderToStringAsync(emailBody, user);
+        _backgroundJobClient.Enqueue(() =>
+            _sendEmail.Send(user.Email, emailSubject, body));
 
         return true;
     }
@@ -109,4 +117,52 @@ public class AccountService : IAccountService
         return true;
     }
 
+    public async Task<User> GetUserByActiveCode(string userId, string activeCode)
+    {
+        User user = await _context.Users.SingleOrDefaultAsync(u => u.UserId == userId && u.ActiveCode == activeCode);
+        if (user == null)
+            return null;
+        // expire token after 10 minute. 
+        int expireTimePerMin = Convert.ToInt32(_conf.GetSection("Emails").GetSection("ExpireTimePerMin").Value);
+        if (user.ActiveCodeGenerateDateTime.AddMinutes(expireTimePerMin) < DateTime.Now)
+        {
+            // send new link
+            await RevokeActiveCodeAndNewSendEmail(user, "Emails/_ForgotPassword", "بازیابی حساب کاربری");
+
+            return null;
+        }
+
+        return user;
+    }
+
+    public async Task<bool> ResetPassword(User user, string newPassword)
+    {
+        string hashedNewPassword = PasswordHelper.HashPassword(newPassword);
+        user.Password = hashedNewPassword;
+        // expire old link to
+        user.ActiveCode = CodeGenerators.Generate64ByteUniqueCode();
+        user.ActiveCodeGenerateDateTime = DateTime.Now;
+
+        try
+        {
+            await UpdateUser(user);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($" >>> Error when in ResetPassword UpdateUser >>> {e}");
+            return false;
+        }
+    }
+
+    public async Task<string> GetUserIdByUserName(string userName)
+    {
+        var userId = await _context.Users
+            .Where(u => u.UserName == userName)
+            .Select(u => u.UserId)
+            .ToListAsync();
+
+        return userId[0];
+    }
 }
+

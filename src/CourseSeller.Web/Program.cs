@@ -3,15 +3,41 @@ using CourseSeller.Core.Services;
 using CourseSeller.DataLayer.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Hangfire;
+using Hangfire.SqlServer;
+using CourseSeller.Core.Convertors;
+using CourseSeller.Core.Senders;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
 
 var services = builder.Services;
 var conf = builder.Configuration;
 var env = builder.Environment;
+
+
+#region HangFire
+
+services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(conf.GetConnectionString("MssqlConnection"), new SqlServerStorageOptions
+    {
+        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+        QueuePollInterval = TimeSpan.Zero,
+        UseRecommendedIsolationLevel = true,
+        DisableGlobalLocks = true
+    }));
+
+// Add the processing server as IHostedService
+services.AddHangfireServer();
+
+#endregion
+
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
 
 #region Authentication
@@ -43,6 +69,8 @@ services.AddDbContext<MssqlContext>(options =>
 
 #region IoC
 
+services.AddTransient<IViewRenderService, RenderViewToString>();
+services.AddTransient<ISendEmail, SendEmail>();
 services.AddTransient<IAccountService, AccountService>();
 
 #endregion
@@ -63,8 +91,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+// Hangfire dashboard
+app.UseHangfireDashboard();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
+});
 
 app.Run();
