@@ -7,15 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="DTOs\" />
-		<Folder Include="Convertors\" />
-		<Folder Include="Generators\" />
 		<Folder Include="Senders\" />
-		<Folder Include="Security\" />
-		<Folder Include="Services\Interfaces\" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.21" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21">

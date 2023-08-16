@@ -1,5 +1,87 @@
-﻿@await RenderSectionAsync("Styles", required: false)
+﻿<!DOCTYPE html>
+<html class="no-js" dir="rtl" lang="fa-IR">
+<head>
+    <meta charset="UTF-8">
+    <title> @ViewData["Title"] | @conf["SiteName"] </title>
+    <link rel="icon" href="/images/favicon.jpg">
+    <partial name="_MetaTags" />
+    <partial name="_StyleTags" />
+    <script src="/js/jquery.min.js"></script>
 
-@RenderBody()
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <script src="/js/modernizr-custom.js"></script>
 
-@await RenderSectionAsync("Scripts", required: false)
+    <div class="landing-layer">
+        <div class="container">
+            <nav>
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <ul>
+                            <li>
+                                <a href=""> همکاری در فروش </a>
+                                <a href=""> درباره ما </a>
+                                <a href=""> تماس با ما </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="clientarea">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <div class="loggein">
+                                    <i class="zmdi zmdi-account"></i><a asp-area="UserPanel" asp-controller="Home" asp-action="Index"> @User.Identity.Name ، خوش آمدی </a> /
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" style="margin: 0 !important; padding: 0 !important;display: inline;">
+                                        <button type="submit" class="btn-link text-danger" id="mybtn"> خروج </button>
+                                    </form>
+                                </div>
+                                <style>
+                                    #mybtn {
+                                        display: inline;
+                                        color: red;
+                                        margin: 0;
+                                        padding: 0;
+                                    }
+
+                                    #mybtn:hover {
+                                        text-decoration: none;
+                                        color: darkred;
+                                    }
+                                </style>
+                            }
+                            
+                            else
+                            {
+                            <div class="signin ">
+                                <i class="zmdi zmdi-account"></i>
+                                <a asp-controller="Account" asp-action="Login"> ورود </a> /
+                                <a asp-controller="Account" asp-action="Register"> عضویت </a>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            @RenderSection("SearchBox",false)
+
+        </div>
+    </div>
+
+    <!-- main manu -->
+    <partial name="_MainMenu" />
+    <!-- /main manu -->
+    <!-- content -->
+    @RenderBody()
+    <!-- /content -->
+    <!-- footer -->
+    <partial name="_Footer" />
+    <!-- /footer -->
+
+
+    <partial name="_ScriptTags" />
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

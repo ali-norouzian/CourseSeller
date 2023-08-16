@@ -1,0 +1,85 @@
+﻿@model CourseSeller.Core.DTOs.Account.LoginViewModel
+@{
+    ViewData["Title"] = "ورود";
+}
+
+
+<partial name="_AddressBarStart" />
+ورود به سایت
+<partial name="_AddressBarFinish" />
+
+
+<main class="client-page">
+    <div class="container-content">
+        @if (TempData["ResetPasswordIsSuccess"] != null)
+        {
+            <div class="alert alert-success">
+                کلمه عبور شما با موفقیت تغییر یافت.
+            </div>
+        }
+        @if (ViewData["IsSuccess"] != null)
+        {
+            <div class="alert alert-success">
+                ورود با موفقیت انجام شد. بعد چند ثانیه به صفحه اصلی هدایت می شوید.
+            </div>
+
+            <script>
+                var delay = 2000;
+                setTimeout(function () { window.location = '/UserPanel'; }, delay);
+            </script>
+        }
+
+        @if (TempData["EditedProfileUserName"] != null)
+        {
+            <div class="alert alert-warning">
+                به دلیل تغییر نام کاربری خود باید دوباره وارد شوید.
+            </div>
+        }
+        @if (TempData["EditedProfileEmail"] != null)
+        {
+            <div class="alert alert-warning">
+                به دلیل تغییر ایمیل باید ایمیل جدید خود را فعال کنید و دوباره وارد شوید. ایمیل فعالسازی برای شما ارسال شد.
+            </div>
+        }
+
+        <header><h2> ورود به سایت </h2></header>
+
+        <div class="form-layer">
+
+            <form asp-action="Login" method="post">
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="email-address"><i class="zmdi zmdi-email"></i></span>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="ایمیل" aria-describedby="email-address">
+                </div>
+                <span class="text-danger" asp-validation-for="Email"></span>
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="password"><i class="zmdi zmdi-lock"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="رمز عبور " aria-describedby="password">
+                </div>
+                <span class="text-danger" asp-validation-for="Password"></span>
+
+                <div class="remember-me">
+                    <label><input asp-for="RememberMe" type="checkbox" name="">  مرا بخاطر بسپار </label>
+                </div>
+
+                <div class="link">
+                    <a asp-controller="Account" asp-action="ForgotPassword"> <i class="zmdi zmdi-lock"></i> رمز عبور خود را فراموش کرده ام !</a>
+                    <a asp-controller="Account" asp-action="Register"> <i class="zmdi zmdi-account"></i> عضویت در سایت </a>
+                </div>
+
+                <button class="btn btn-success"> ورود به سایت </button>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}
