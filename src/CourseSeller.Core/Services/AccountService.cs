@@ -90,7 +90,10 @@ public class AccountService : IAccountService
         }
         catch (Exception e)
         {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($" >>> Error when UpdateUser >>> {e}");
+            Console.ForegroundColor = default;
+
             return false;
         }
     }

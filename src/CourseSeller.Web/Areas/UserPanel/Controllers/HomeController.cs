@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace CourseSeller.Web.Areas.UserPanel.Controllers;
 
@@ -89,9 +90,16 @@ public class HomeController : Controller
         }
 
         // Go for this when have not error
-        await _userPanelService.EditProfile(User.Identity.Name, viewModel);
 
-        ViewData["IsSuccess"] = true;
+        // SqlError: maybe hacker try to add duplicate value by editing hidden forms in html 
+        if (!await _userPanelService.EditProfile(User.Identity.Name, viewModel))
+        {
+            TempData["ToxicityError"] = "Fuck Your Mother Hacker :|";
+        }
+        else
+        {
+            ViewData["IsSuccess"] = true;
+        }
 
         // Logout for setting cookies with new username 
         if (userNameOrEmailChangedFlag)

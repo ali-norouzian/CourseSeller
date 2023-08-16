@@ -21,6 +21,12 @@
                         <header><h1> ویرایش حساب کاربری </h1></header>
                         <div class="inner form-layer">
                             <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                                @if (TempData["ToxicityError"] != null)
+                                {
+                                    <div class="alert alert-danger">
+                                        @TempData["ToxicityError"]
+                                    </div>
+                                }
                                 @if (ViewData["IsSuccess"] != null)
                                 {
                                     <div class="alert alert-success">
@@ -28,9 +34,9 @@
                                     </div>
                                 }
 
-                                <input type="hidden" name="OldEmail" value="@Model.Email" />
-                                <input type="hidden" name="OldUserName" value="@Model.UserName" />
-                                <input type="hidden" asp-for="AvatarName" />
+                                <input type="hidden" name="OldEmail" value="@Model.Email"/>
+                                <input type="hidden" name="OldUserName" value="@Model.UserName"/>
+                                <input type="hidden" asp-for="AvatarName"/>
 
                                 <div class="row">
                                     <style>
@@ -57,7 +63,7 @@
                                     <div class="col-md-7 col-sm-8 col-xs-12" style="margin-bottom: 4%">
                                         <p class="help-block">آواتار</p>
                                         <input asp-for="UserAvatar" type="file" style="margin-bottom: 2%">
-                                        <img src="/UserAvatars/@Model.AvatarName" class="thumbnail" style="max-width: 150px" />
+                                        <img src="/UserAvatars/@Model.AvatarName" class="thumbnail" style="max-width: 150px"/>
                                         <span asp-validation-for="UserAvatar" class="text-danger"></span>
 
                                     </div>

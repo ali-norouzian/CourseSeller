@@ -70,7 +70,7 @@ public class UserPanelService : IUserPanelService
     }
 
     // Get username separately for when username changed
-    public async Task EditProfile(string userName, EditProfileViewModel viewModel)
+    public async Task<bool> EditProfile(string userName, EditProfileViewModel viewModel)
     {
         // We had new image to upload
         if (viewModel.UserAvatar != null)
@@ -82,6 +82,7 @@ public class UserPanelService : IUserPanelService
                 imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars",
                     viewModel.AvatarName);
                 // We can do soft delete and hold use old images in a folder for security purpose
+                // BUG: We have roleback db on error but we havent it on delete file!
                 if (File.Exists(imagePath))
                     File.Delete(imagePath);
             }
@@ -107,7 +108,7 @@ public class UserPanelService : IUserPanelService
         user.Email = viewModel.Email;
         user.UserAvatar = viewModel.AvatarName;
 
-        await _accountService.UpdateUser(user);
+        return await _accountService.UpdateUser(user);
     }
 
     public bool ImageHasValidExtension(string imageFileName, List<string> expectedExtensions = null)
