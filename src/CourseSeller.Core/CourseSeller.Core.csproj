@@ -1,18 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Convertors\" />
-    <Folder Include="Generators\" />
-    <Folder Include="Senders\" />
-    <Folder Include="Security\" />
-    <Folder Include="Services\Interfaces\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="DTOs\" />
+		<Folder Include="Convertors\" />
+		<Folder Include="Generators\" />
+		<Folder Include="Senders\" />
+		<Folder Include="Security\" />
+		<Folder Include="Services\Interfaces\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.21" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CourseSeller.DataLayer\CourseSeller.DataLayer.csproj" />
+	</ItemGroup>
 
 </Project>
