@@ -1,0 +1,40 @@
+﻿@using CourseSeller.Core.Convertors
+@using CourseSeller.Core.DTOs.UserPanel
+
+@{
+    var user = ViewData["UserPanelInfo"] as UserInfoViewModel;
+}
+
+<div class="col-md-3 col-sm-4 col-xs-12">
+    <aside>
+
+        <div class="avatar-layer">
+            <div class="img-layer">
+                <a href="#" class="change-image"><i class="zmdi zmdi-edit"></i></a>
+                <img src="/UserAvatars/@user.ImageName">
+            </div>
+            <div class="detail">
+                <span> @user.UserName </span>
+                <span> عضویت : @user.RegisterDateTime.ToShamsi() </span>
+            </div>
+        </div>
+
+        <section>
+            <header><h3> میز کار </h3></header>
+            <div class="inner">
+                <ul>
+                    <li><a asp-area="UserPanel" asp-controller="Home" asp-action="Index"> مشاهده حساب کابری </a></li>
+                    <li><a asp-area="UserPanel" asp-controller="Home" asp-action="EditProfile"> ویرایش حساب کابری </a></li>
+                    <li><a asp-area="UserPanel" asp-controller="Home" asp-action="ChangePassword"> تغییر کلمه عبور </a></li>
+                    <li><a asp-area="UserPanel" asp-controller="Wallet" asp-action="Index"> کیف پول شما </a></li>
+                    <li><a asp-area="" asp-controller="" asp-action=""> تنظیمات حساب کاربری </a></li>
+                    <li>
+                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn-link text-danger" id="mybtn"> خروج از حساب کاربری </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </aside>
+</div>

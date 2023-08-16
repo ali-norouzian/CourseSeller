@@ -1,0 +1,41 @@
+﻿@using CourseSeller.Core.Convertors
+@model CourseSeller.Core.DTOs.UserPanel.UserInfoViewModel
+@{
+    ViewData["Title"] = $"{User.Identity.Name} پنل کاربری";
+}
+
+
+<partial name="_AddressBarStart" />
+پنل کاربری
+<partial name="_AddressBarFinish" />
+
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+
+                <partial name="_SideBar" />
+
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header>
+                            <h1> داشبورد </h1>
+                        </header>
+                        <div class="inner">
+                            <div class="account-information">
+                                <h3> اطلاعات کاربری </h3>
+                                <ul>
+                                    <li> <i class="zmdi zmdi-assignment-account"></i> نام کاربری : @Model.UserName </li>
+                                    <li> <i class="zmdi zmdi-email"></i> ایمیل : @Model.Email </li>
+                                    <li> <i class="zmdi zmdi-calendar-check"></i> تاریخ عضویت : @Model.RegisterDateTime.ToShamsi() </li>
+                                    <li> <i class="zmdi zmdi-account"></i> موجودی کیف پول : @Model.Wallet تومان </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
