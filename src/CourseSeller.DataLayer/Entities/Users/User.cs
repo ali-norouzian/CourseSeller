@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
+using CourseSeller.DataLayer.Entities.Wallets;
 
 
 namespace CourseSeller.DataLayer.Entities.Users
@@ -46,10 +46,14 @@ namespace CourseSeller.DataLayer.Entities.Users
         [Display(Name = "تاریخ ثبت نام")]
         public DateTime RegisterDateTime { get; set; }
 
+        [Display(Name = "موجودی حساب")]
+        public int WalletBalance { get; set; } = 0;
+
 
         #region Relations
 
         public List<UserRole> UserRoles { get; set; }
+        public List<Wallet> Wallets { get; set; }
 
         #endregion
     }

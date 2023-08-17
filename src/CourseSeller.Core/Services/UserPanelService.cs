@@ -1,15 +1,20 @@
 ﻿using CourseSeller.Core.DTOs.UserPanel;
+using CourseSeller.Core.DTOs.UserPanel.Wallet;
 using CourseSeller.Core.Generators;
 using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Users;
+using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseSeller.Core.Services;
 
 public class UserPanelService : IUserPanelService
 {
+    public const byte DEPOSIT_TYPEID = 1;
+    public const byte WITHDRAWAL_TYPEID = 2;
+
     private MssqlContext _context;
     private IAccountService _accountService;
 
@@ -27,7 +32,7 @@ public class UserPanelService : IUserPanelService
                 UserName = u.UserName,
                 RegisterDateTime = u.RegisterDateTime,
                 Email = u.Email,
-                Wallet = 0,
+                WalletBalance = u.WalletBalance,
                 SideBarViewModel = new()
                 {
                     ImageName = u.UserAvatar,
@@ -140,5 +145,51 @@ public class UserPanelService : IUserPanelService
 
         return false;
     }
+
+
+    #region Wallet
+
+    public async Task<List<WalletViewModel>> GetUserWallet(string userName)
+    {
+        var userId = await _accountService.GetUserIdByUserName(userName);
+
+        return await _context.Wallets
+            .Where(w => w.UserId == userId && w.IsPaid == true)
+            .Select(w => new WalletViewModel()
+            {
+                Amount = w.Amount,
+                DateTime = w.CreatedDateTime,
+                Description = w.Description,
+                Type = w.TypeId
+            })
+            .OrderByDescending(w => w.DateTime)
+            .ThenBy(w => w.Description)
+            .ThenByDescending(w => w.Amount)
+            .ToListAsync();
+    }
+
+    public async Task ChargeWallet(string userName, int amount, string description = "شارژ حساب", bool isPaid = false)
+    {
+        var wallet = new Wallet()
+        {
+            Amount = +amount,
+            CreatedDateTime = DateTime.Now,
+            Description = description,
+            IsPaid = isPaid,
+            TypeId = DEPOSIT_TYPEID,
+            UserId = await _accountService.GetUserIdByUserName(userName),
+        };
+
+        await AddWallet(wallet);
+    }
+
+    public async Task AddWallet(Wallet wallet)
+    {
+        await _context.Wallets.AddAsync(wallet);
+        await _context.SaveChangesAsync();
+    }
+
+    #endregion
+
 
 }

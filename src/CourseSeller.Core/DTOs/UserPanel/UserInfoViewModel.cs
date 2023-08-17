@@ -5,7 +5,7 @@
         public string UserName { get; set; }
         public string Email { get; set; }
         public DateTime RegisterDateTime { get; set; }
-        public int Wallet { get; set; }
+        public int WalletBalance { get; set; }
         public SideBarViewModel SideBarViewModel { get; set; }
     }
 }

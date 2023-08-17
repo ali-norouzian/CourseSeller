@@ -1,0 +1,100 @@
+﻿﻿@using CourseSeller.Core.DTOs.UserPanel.Wallet
+@using CourseSeller.Core.Services
+@using CourseSeller.Core.Convertors
+@using CourseSeller.Core.DTOs.UserPanel.Wallet
+@model CourseSeller.Core.DTOs.UserPanel.Wallet.ChargeWalletViewModel
+@{
+    ViewData["Title"] = "کیف پول شما";
+}
+
+
+<partial name="_AddressBarStart" />
+کیف پول شما
+<partial name="_AddressBarFinish" />
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+
+                <partial name="_SideBar" model="null"/>
+
+                <div class="col-md-9 col-sm-8 col-xs-12">
+                    <section class="user-account-content">
+                        <header><h1> شارژ کیف پول </h1></header>
+                        <div class="inner form-layer">
+                            <form asp-action="Index" method="post">
+
+                                <div class="row">
+                                    <style>
+                                        .margin-bot {
+                                            margin-bottom: 5%;
+                                        }
+                                    </style>
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="amount"><i class="zmdi zmdi-money"></i></span>
+                                            <input asp-for="Amount" type="number" class="form-control" placeholder="مبلغ به تومان" aria-describedby="amount">
+                                        </div>
+                                        <span asp-validation-for="Amount" class="text-danger margin-bot"></span>
+
+                                    </div>
+
+                                    <div class="col-md-7 col-sm-8 col-xs-12">
+                                        <button class="btn btn-success"> شارژ کیف پول </button>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                            <hr />
+
+                            @{
+                                List<WalletViewModel> walletList = ViewData["WalletList"] as List<WalletViewModel>;
+
+                            }
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>مبلغ</th>
+                                    <th>تاریخ</th>
+                                    <th>نوع تراکنش</th>
+                                    <th>شرح</th>
+                                </tr>
+
+                                @foreach (var wl in walletList)
+                                {
+                                    <tr>
+                                        <td>@Math.Abs(wl.Amount).ToString("#,0 تومان")</td>
+                                        <td>@wl.DateTime.ToShamsiWithClock()</td>
+
+                                        @if (wl.Type == UserPanelService.DEPOSIT_TYPEID)
+                                        {
+                                            <td class="alert alert-success">
+                                                <span>واریز</span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="alert alert-danger">
+                                                <span>برداشت</span>
+                                            </td>
+                                        }
+
+                                        <td>@wl.Description</td>
+                                    </tr>
+                                }
+
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,4 +1,5 @@
 ﻿using CourseSeller.DataLayer.Entities.Users;
+using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseSeller.DataLayer.Contexts
@@ -20,6 +21,12 @@ namespace CourseSeller.DataLayer.Contexts
         #endregion
 
 
+        #region Wallet
+
+        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<WalletType> WalletTypes { get; set; }
+
+        #endregion
 
     }
 }
