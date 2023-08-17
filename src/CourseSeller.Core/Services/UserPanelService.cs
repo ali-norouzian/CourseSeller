@@ -1,5 +1,6 @@
 ﻿using CourseSeller.Core.DTOs.UserPanel;
 using CourseSeller.Core.Generators;
+using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Users;
@@ -120,6 +121,23 @@ public class UserPanelService : IUserPanelService
         var imageExtension = Path.GetExtension(imageFileName);
         if (expectedExtensions.Contains(imageExtension))
             return true;
+
+        return false;
+    }
+
+    public async Task<bool> ChangePassword(string userName, string oldPassword, string newPassword)
+    {
+        var user = await _accountService.GetUserByUserName(userName);
+
+        if (PasswordHelper.VerifyPassword(oldPassword, user.Password))
+        {
+            user.Password = PasswordHelper.HashPassword(newPassword);
+
+            await _accountService.UpdateUser(user);
+
+            return true;
+        }
+
         return false;
     }
 

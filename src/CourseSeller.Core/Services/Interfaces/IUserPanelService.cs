@@ -9,4 +9,6 @@ public interface IUserPanelService
     Task<EditProfileViewModel> GetDataForEditUserProfile(string userName);
     Task<bool> EditProfile(string userName, EditProfileViewModel viewModel);
     bool ImageHasValidExtension(string imageFileName, List<string> expectedExtensions = null);
+    Task<bool> ChangePassword(string userName, string oldPassword, string newPassword);
+
 }

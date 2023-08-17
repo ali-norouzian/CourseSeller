@@ -111,5 +111,30 @@ public class HomeController : Controller
 
         return RedirectToAction(nameof(EditProfile));
     }
+
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
+    {
+        bool errorFlag = !ModelState.IsValid;
+
+        if (!await _userPanelService.ChangePassword(User.Identity.Name, viewModel.OldPassword, viewModel.Password))
+        {
+            ModelState.AddModelError("OldPassword", "رمز عبور فعلی وارد شده صحیح نمی باشد");
+            errorFlag = true;
+        }
+        if (errorFlag)
+            return View(viewModel);
+
+        ViewData["IsSuccess"] = true;
+
+        return View();
+
+    }
+
 }
 

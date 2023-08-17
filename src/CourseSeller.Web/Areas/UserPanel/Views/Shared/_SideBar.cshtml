@@ -1,20 +1,45 @@
 ﻿@model CourseSeller.Core.DTOs.UserPanel.SideBarViewModel
 @using CourseSeller.Core.Convertors
-
+@using CourseSeller.Core.DTOs.UserPanel
+@using CourseSeller.Core.Services.Interfaces
+@inject IUserPanelService _UserPanelService
+@{
+    SideBarViewModel injectedSideBarViewModel=null;
+    if (Model==null)
+    {
+        injectedSideBarViewModel = await _UserPanelService.GetSideBarData(User.Identity.Name);
+    }
+}
 
 <div class="col-md-3 col-sm-4 col-xs-12">
     <aside>
 
-        <div class="avatar-layer">
-            <div class="img-layer">
-                <a href="#" class="change-image"><i class="zmdi zmdi-edit"></i></a>
-                <img src="/UserAvatars/@Model.ImageName">
+        @if (injectedSideBarViewModel != null)
+        {
+            <div class="avatar-layer">
+                <div class="img-layer">
+                    <a href="#" class="change-image"><i class="zmdi zmdi-edit"></i></a>
+                    <img src="/UserAvatars/@injectedSideBarViewModel.ImageName">
+                </div>
+                <div class="detail">
+                    <span> @injectedSideBarViewModel.UserName </span>
+                    <span> عضویت : @injectedSideBarViewModel.RegisterDateTime.ToShamsi() </span>
+                </div>
             </div>
-            <div class="detail">
-                <span> @Model.UserName </span>
-                <span> عضویت : @Model.RegisterDateTime.ToShamsi() </span>
+        }
+        else
+        {
+            <div class="avatar-layer">
+                <div class="img-layer">
+                    <a href="#" class="change-image"><i class="zmdi zmdi-edit"></i></a>
+                    <img src="/UserAvatars/@Model.ImageName">
+                </div>
+                <div class="detail">
+                    <span> @Model.UserName </span>
+                    <span> عضویت : @Model.RegisterDateTime.ToShamsi() </span>
+                </div>
             </div>
-        </div>
+        }
 
         <section>
             <header><h3> میز کار </h3></header>
