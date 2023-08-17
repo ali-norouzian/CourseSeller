@@ -17,8 +17,11 @@ public interface IUserPanelService
     #region Wallet
 
     Task<List<WalletViewModel>> GetUserWallet(string userName);
-    Task ChargeWallet(string userName, int amount, string description = "شارژ حساب", bool isPaid = false);
-    Task AddWallet(Wallet wallet);
+    Task<int> AddWallet(string userName, int amount, string description = "شارژ حساب", bool isPaid = false);
+    Task<Wallet> GetWalletById(int walletId);
+    Task UpdateWallet(Wallet wallet);
+    Task ChargeUserWallet(string userName, int amount);
+    Task SetWalletIsPaidAndChargeTransaction(Wallet wallet, string userName, int amount);
 
     #endregion
 }

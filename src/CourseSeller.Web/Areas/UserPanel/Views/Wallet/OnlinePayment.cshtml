@@ -1,0 +1,44 @@
+﻿﻿@{
+    ViewData["Title"] = "نتیجه پرداخت";
+}
+
+
+<partial name="_AddressBarStart" />
+نتیجه پرداخت
+<partial name="_AddressBarFinish" />
+
+<main>
+    <div class="container">
+        <div class="user-account">
+            <div class="row">
+
+                <partial name="_SideBar" model="null" />
+                
+                <div class="col-md-9 col-sm-8 col-xs-12">
+
+                    @if (ViewData["IsSuccess"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <h3>پرداخت شما با موفقیت انجام شد.</h3>
+                            <p>کد پیگیری: @ViewData["RefId"]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <h3>پرداخت با شکست مواجه شد.</h3>
+                            <p>کد پیگیری: @ViewData["RefId"]</p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}

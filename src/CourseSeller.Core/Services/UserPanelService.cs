@@ -168,7 +168,7 @@ public class UserPanelService : IUserPanelService
             .ToListAsync();
     }
 
-    public async Task ChargeWallet(string userName, int amount, string description = "شارژ حساب", bool isPaid = false)
+    public async Task<int> AddWallet(string userName, int amount, string description = "شارژ حساب", bool isPaid = false)
     {
         var wallet = new Wallet()
         {
@@ -180,13 +180,56 @@ public class UserPanelService : IUserPanelService
             UserId = await _accountService.GetUserIdByUserName(userName),
         };
 
-        await AddWallet(wallet);
-    }
-
-    public async Task AddWallet(Wallet wallet)
-    {
         await _context.Wallets.AddAsync(wallet);
         await _context.SaveChangesAsync();
+
+        return wallet.WalletId;
+    }
+
+    public async Task<Wallet> GetWalletById(int walletId)
+    {
+        return await _context.Wallets.FindAsync(walletId);
+    }
+
+    public async Task UpdateWallet(Wallet wallet)
+    {
+        _context.Wallets.Update(wallet);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ChargeUserWallet(string userName, int amount)
+    {
+        var user = await _accountService.GetUserByUserName(userName);
+        user.WalletBalance += amount;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task SetWalletIsPaidAndChargeTransaction(Wallet wallet, string userName, int amount)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            // Perform your database operations within the transaction
+            // For example, you can add, update, or delete entities
+
+            wallet.IsPaid = true;
+            _context.Wallets.Update(wallet);
+            var user = await _accountService.GetUserByUserName(userName);
+            user.WalletBalance += amount;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            // Commit the transaction if everything succeeds
+            await transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            // Handle exceptions or rollback the transaction if needed
+            await transaction.RollbackAsync();
+            throw; // Optional: rethrow the exception
+        }
     }
 
     #endregion
