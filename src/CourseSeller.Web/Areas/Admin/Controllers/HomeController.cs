@@ -1,4 +1,5 @@
-﻿using CourseSeller.Core.Services.Interfaces;
+﻿using CourseSeller.Core.DTOs.Admin;
+using CourseSeller.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,20 @@ public class HomeController : Controller
     [Route("/[area]/[action]")]
     public async Task<IActionResult> CreateUser()
     {
+        ViewData["Roles"] = await _adminService.GetAllRoles();
+
         return View();
+    }
+
+    [HttpPost]
+    [Route("/[area]/[action]")]
+    public async Task<IActionResult> CreateUser(CreateUserViewModel viewModel)
+    {
+        //if (!ModelState.IsValid)
+        //    return View(viewModel);
+
+        var userId = await _adminService.CreateUser(viewModel);
+
+        return RedirectToAction(nameof(Users));
     }
 }

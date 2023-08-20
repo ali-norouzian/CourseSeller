@@ -21,6 +21,9 @@ namespace CourseSeller.Core.DTOs.Admin
         [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد.")]
         public string Password { get; set; }
 
+        [Display(Name = "فعال")]
+        public bool IsActive { get; set; } = false;
+
         [Display(Name = "آواتار")]
         public IFormFile Avatar { get; set; }
 
