@@ -1,6 +1,5 @@
 ﻿using CourseSeller.Core.DTOs.UserPanel.Wallet;
 using CourseSeller.Core.Services.Interfaces;
-using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

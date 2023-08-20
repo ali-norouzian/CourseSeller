@@ -73,6 +73,7 @@ services.AddTransient<IViewRenderService, RenderViewToString>();
 services.AddTransient<ISendEmail, SendEmail>();
 services.AddTransient<IAccountService, AccountService>();
 services.AddTransient<IUserPanelService, UserPanelService>();
+services.AddTransient<IAdminService, AdminService>();
 
 #endregion
 
