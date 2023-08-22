@@ -4,7 +4,6 @@ using CourseSeller.Core.Generators;
 using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
-using CourseSeller.DataLayer.Entities.Users;
 using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +14,8 @@ public class UserPanelService : IUserPanelService
     public const byte DEPOSIT_TYPEID = 1;
     public const byte WITHDRAWAL_TYPEID = 2;
 
-    private MssqlContext _context;
-    private IAccountService _accountService;
+    private readonly MssqlContext _context;
+    private readonly IAccountService _accountService;
 
     public UserPanelService(MssqlContext context, IAccountService accountService)
     {

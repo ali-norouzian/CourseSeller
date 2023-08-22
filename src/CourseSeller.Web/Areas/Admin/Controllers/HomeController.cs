@@ -41,11 +41,31 @@ public class HomeController : Controller
     [Route("/[area]/[action]")]
     public async Task<IActionResult> CreateUser(CreateUserViewModel viewModel)
     {
-        //if (!ModelState.IsValid)
-        //    return View(viewModel);
+        if (!ModelState.IsValid)
+            return View(viewModel);
 
         var userId = await _adminService.CreateUser(viewModel);
 
         return RedirectToAction(nameof(Users));
+    }
+
+    [Route("/[area]/[action]/{id}")]
+    public async Task<IActionResult> EditUser(string id)
+    {
+        ViewData["Roles"] = await _adminService.GetAllRoles();
+
+        return View(await _adminService.GetUserInfoForUpdate(id));
+    }
+
+    [HttpPost]
+    [Route("/[area]/[action]/{id}")]
+    public async Task<IActionResult> EditUser(EditUserViewModel viewModel)
+    {
+        //if (!ModelState.IsValid)
+        //    return View(viewModel);
+
+        await _adminService.UpdateUser(viewModel);
+
+        return Redirect(Request.Path);
     }
 }

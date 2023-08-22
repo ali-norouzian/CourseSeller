@@ -5,6 +5,7 @@ using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseSeller.Core.Services;
@@ -98,6 +99,105 @@ public class AdminService : IAdminService
 
 
         return user.UserId;
+    }
+
+    public async Task<string> UploadNewAvatar(string oldAvatarName, IFormFile avatar = null)
+    {
+        var avatarName = avatar.Name;
+        // We had new image to upload
+        if (avatar != null)
+        {
+            string imagePath = null;
+            // Delete old image
+            if (oldAvatarName != "Default.png")
+            {
+                imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars",
+                    oldAvatarName);
+                // We can do soft delete and hold use old images in a folder for security purpose
+                // BUG: We have roleback db on error but we havent it on delete file!
+                if (File.Exists(imagePath))
+                    File.Delete(imagePath);
+            }
+            // Save new image
+            avatarName =
+                $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(avatar.FileName)}";
+            imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars",
+                avatarName);
+            await using var stream = new FileStream(imagePath, FileMode.Create);
+            await avatar.CopyToAsync(stream);
+        }
+
+        return avatarName;
+    }
+
+    public async Task<EditUserViewModel> GetUserInfoForUpdate(string userId)
+    {
+        return await _context.Users.Where(u => u.UserId == userId)
+            .Select(u => new EditUserViewModel()
+            {
+                UserId = userId,
+                AvatarName = u.UserAvatar,
+                Email = u.Email,
+                UserName = u.UserName,
+                IsActive = u.IsActive,
+                SelectedRoles = u.UserRoles
+                    .Select(r => r.RoleId)
+                    .ToList(),
+            }).SingleAsync();
+    }
+
+    // It can be better...
+    public async Task UpdateUser(EditUserViewModel viewModel)
+    {
+        var user = await _context.Users.FindAsync(viewModel.UserId);
+        user.Email = viewModel.Email;
+        user.UserName = viewModel.UserName;
+        user.IsActive= viewModel.IsActive;
+        if (!string.IsNullOrEmpty(viewModel.Password))
+            user.Password = PasswordHelper.HashPassword(viewModel.Password);
+
+        if (viewModel.Avatar != null)
+            {
+                //Delete old Image
+                if (viewModel.AvatarName != "Defult.jpg")
+                {
+                   string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", viewModel.AvatarName);
+                    if (File.Exists(deletePath))
+                        File.Delete(deletePath);
+                }
+
+                //Save New Image
+                user.UserAvatar = CodeGenerators.Generate32ByteUniqueCode() + Path.GetExtension(viewModel.Avatar.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", user.UserAvatar);
+                await using var stream = new FileStream(imagePath, FileMode.Create);
+                await viewModel.Avatar.CopyToAsync(stream);
+            }
+
+        //user.UserAvatar = viewModel.AvatarName;
+
+        // Delete All User Roles
+        _context.UserRoles.Where(r => r.UserId == user.UserId).ToList().ForEach(r => _context.UserRoles.Remove(r));
+
+        // Add Roles to user
+        var userRoles = new List<UserRole>();
+        // Select 0 role
+        if (viewModel.SelectedRoles!=null)
+        {
+            foreach (var roleId in viewModel.SelectedRoles)
+            {
+                userRoles.Add(new UserRole()
+                {
+                    RoleId = roleId,
+                    UserId = user.UserId
+                });
+            }
+        }
+
+        await _context.UserRoles.AddRangeAsync(userRoles);
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+
     }
 }
 

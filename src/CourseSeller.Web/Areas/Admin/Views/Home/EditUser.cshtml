@@ -1,0 +1,114 @@
+﻿@using CourseSeller.DataLayer.Entities.Users
+@model CourseSeller.Core.DTOs.Admin.EditUserViewModel
+@{
+    ViewData["Title"] = "کاربران";
+    var Roles = ViewData["Roles"]  as List<Role>;
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">به روز رسانی مشخصات کاربر</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row">
+    <form method="post" enctype="multipart/form-data">
+        
+        <input asp-for="UserId" type="hidden"/>
+        <input asp-for="AvatarName" type="hidden"/>
+
+        <div class="col-md-8">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    اطلاعات کاربر
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>نام کاربری</label>
+                        <input type="text" asp-for="UserName" class="form-control">
+                    </div>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+
+                    <div class="form-group">
+                        <label>ایمیل</label>
+                        <input type="email" asp-for="Email" class="form-control">
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+
+                    <div class="form-group">
+                        <label>کلمه عبور</label>
+                        <input type="text" asp-for="Password" class="form-control">
+                        <span class="help-text">در صورت خالی وارد کردن تغییر نخواهد کرد.</span>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+
+                    <div class="form-group">
+                        <label>فعال</label>
+                        <input type="checkbox" asp-for="IsActive" class="">
+                    </div>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+
+                    <div class="form-group">
+                        <label>انتخاب نقش کاربر</label>
+                        @foreach (var item in Roles)
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="SelectedRoles" value="@item.RoleID" @(Model.SelectedRoles.Contains(item.RoleID) ? "checked" : "")>@item.RoleTitle
+                                </label>
+                            </div>
+                        }
+
+                    </div>
+                    <input type="submit" value="ذخیره اطلاعات" class="btn btn-success"/>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    تصویر پروفایل
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <img id="imgAvatar" class="thumbnail" src="/UserAvatars/@Model.AvatarName"/>
+                    <div class="form-group">
+                        <label>انتخاب تصویر</label>
+                        <input type="file" asp-for="Avatar">
+                    </div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imgAvatar').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#CreateUserViewModel_UserAvatar").change(function () {
+            readURL(this);
+        });
+    </script>
+}
