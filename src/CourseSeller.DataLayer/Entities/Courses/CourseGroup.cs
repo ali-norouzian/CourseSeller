@@ -25,6 +25,17 @@ namespace CourseSeller.DataLayer.Entities.Courses
         [ForeignKey("ParentId")]
         public List<CourseGroup> CourseGroups { get; set; }
 
+        // Because we have two fk in the same shape like this. we must mapping inverse it too.
+        // CourseGroup (in InverseProperty) is the name of CourseGroup class member object that related to this class.
+        [InverseProperty("CourseGroup")]
+        public List<Course> Course { get; set; }
+
+        // Because we have two fk in the same shape like this. we must mapping inverse it too.
+        // SubGroup (in InverseProperty) is the name of CourseGroup class member object that related to this class.
+        [InverseProperty("SubGroup")]
+        public List<Course> SubGroup { get; set; }
+
+
         #endregion
     }
 }

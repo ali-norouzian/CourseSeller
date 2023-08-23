@@ -65,7 +65,20 @@ VALUES
     (N'ASP.Net Core',0,4),
     (N'Laravel',0,4),
     (N'Django',0,4),
-    (N'برنامه نویسی سخت افزار',0,null),
+    (N'برنامه نویسی سخت افزار',0,null)
+
+INSERT INTO [dbo].[CourseLevels]
+           ([LevelTitle])
+VALUES
+    (N'مقدماتی'),
+    (N'متوسط'),
+    (N'پیشرفته'),
+    (N'خیلی پیشرفته')
+
+INSERT INTO [dbo].[CourseStatus]
+           ([StatusTitle])
+VALUES
+    (N'درحال برگزاری'),
+    (N'کامل شده')
 
 GO
-

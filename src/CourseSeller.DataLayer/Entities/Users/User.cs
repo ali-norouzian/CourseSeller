@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using CourseSeller.DataLayer.Entities.Courses;
 using CourseSeller.DataLayer.Entities.Wallets;
 
 
@@ -51,10 +52,12 @@ namespace CourseSeller.DataLayer.Entities.Users
         [Display(Name = "حذف شده")]
         public bool IsDelete { get; set; }
 
+
         #region Relations
 
         public List<UserRole> UserRoles { get; set; }
         public List<Wallet> Wallets { get; set; }
+        public List<Course> Courses { get; set; }
 
         #endregion
     }

@@ -55,8 +55,11 @@ namespace CourseSeller.DataLayer.Contexts
         #region Courses
 
         public DbSet<CourseGroup> CourseGroups { get; set; }
+        public DbSet<CourseLevel> CourseLevels { get; set; }
+        public DbSet<CourseStatus> CourseStatus { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<CourseEpisode> CourseEpisodes { get; set; }
 
         #endregion
-
     }
 }
