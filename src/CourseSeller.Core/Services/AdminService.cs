@@ -45,6 +45,31 @@ public class AdminService : IAdminService
         return list;
     }
 
+    public async Task<UsersViewModel> GetAllDeletedUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
+    {
+        // Ignore qfs
+        IQueryable<User> result = _context.Users.IgnoreQueryFilters().Where(u=>u.IsDelete==true);
+
+        if (!string.IsNullOrEmpty(filterEmail))
+            result = result.Where(u => u.Email.Contains(filterEmail));
+        if (!string.IsNullOrEmpty(filterUserName))
+            result = result.Where(u => u.UserName.Contains(filterUserName));
+
+        // Show item in each page
+        int take = 10;
+        int skip = (pageId - 1) * take;
+
+        UsersViewModel list = new()
+        {
+            Users = await result.OrderBy(u => u.RegisterDateTime)
+                .Skip(skip).Take(take).ToListAsync(),
+            CurrentPage = pageId,
+            PageCount = await result.CountAsync() / take
+        };
+
+        return list;
+    }
+
     public async Task<List<Role>> GetAllRoles()
     {
         return await _context.Roles.ToListAsync();
@@ -152,26 +177,26 @@ public class AdminService : IAdminService
         var user = await _context.Users.FindAsync(viewModel.UserId);
         user.Email = viewModel.Email;
         user.UserName = viewModel.UserName;
-        user.IsActive= viewModel.IsActive;
+        user.IsActive = viewModel.IsActive;
         if (!string.IsNullOrEmpty(viewModel.Password))
             user.Password = PasswordHelper.HashPassword(viewModel.Password);
 
         if (viewModel.Avatar != null)
+        {
+            //Delete old Image
+            if (viewModel.AvatarName != "Defult.jpg")
             {
-                //Delete old Image
-                if (viewModel.AvatarName != "Defult.jpg")
-                {
-                   string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", viewModel.AvatarName);
-                    if (File.Exists(deletePath))
-                        File.Delete(deletePath);
-                }
-
-                //Save New Image
-                user.UserAvatar = CodeGenerators.Generate32ByteUniqueCode() + Path.GetExtension(viewModel.Avatar.FileName);
-                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", user.UserAvatar);
-                await using var stream = new FileStream(imagePath, FileMode.Create);
-                await viewModel.Avatar.CopyToAsync(stream);
+                string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", viewModel.AvatarName);
+                if (File.Exists(deletePath))
+                    File.Delete(deletePath);
             }
+
+            //Save New Image
+            user.UserAvatar = CodeGenerators.Generate32ByteUniqueCode() + Path.GetExtension(viewModel.Avatar.FileName);
+            string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", user.UserAvatar);
+            await using var stream = new FileStream(imagePath, FileMode.Create);
+            await viewModel.Avatar.CopyToAsync(stream);
+        }
 
         //user.UserAvatar = viewModel.AvatarName;
 
@@ -181,7 +206,7 @@ public class AdminService : IAdminService
         // Add Roles to user
         var userRoles = new List<UserRole>();
         // Select 0 role
-        if (viewModel.SelectedRoles!=null)
+        if (viewModel.SelectedRoles != null)
         {
             foreach (var roleId in viewModel.SelectedRoles)
             {
@@ -198,6 +223,14 @@ public class AdminService : IAdminService
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
 
+    }
+
+    public async Task SoftDeleteUser(string userId)
+    {
+        var user =await _accountService.GetUserByUserId(userId);
+        user.IsDelete=true;
+
+        await _accountService.UpdateUser(user);
     }
 }
 

@@ -43,6 +43,20 @@ public class UserPanelService : IUserPanelService
         return await query.SingleOrDefaultAsync();
     }
 
+    public async Task<UserInfoViewModel> GetUserInfoById(string userId)
+    {
+        var query = _context.Users.Where(u => u.UserId == userId)
+            .Select(u => new UserInfoViewModel()
+            {
+                UserName = u.UserName,
+                RegisterDateTime = u.RegisterDateTime,
+                Email = u.Email,
+                WalletBalance = u.WalletBalance
+            });
+
+        return await query.SingleOrDefaultAsync();
+    }
+
     public async Task<SideBarViewModel> GetSideBarData(string userName)
     {
         var query = _context.Users.Where(u => u.UserName == userName)

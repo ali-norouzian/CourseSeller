@@ -48,6 +48,8 @@ namespace CourseSeller.DataLayer.Entities.Users
         [Display(Name = "موجودی حساب")]
         public int WalletBalance { get; set; } = 0;
 
+        [Display(Name = "حذف شده")]
+        public bool IsDelete { get; set; }
 
         #region Relations
 

@@ -167,5 +167,10 @@ public class AccountService : IAccountService
 
         return userId[0];
     }
+
+    public async Task<User> GetUserByUserId(string userId)
+    {
+        return await _context.Users.FindAsync(userId);
+    }
 }
 

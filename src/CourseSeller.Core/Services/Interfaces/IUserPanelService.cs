@@ -7,6 +7,7 @@ namespace CourseSeller.Core.Services.Interfaces;
 public interface IUserPanelService
 {
     Task<UserInfoViewModel> GetUserInfo(string userName);
+    Task<UserInfoViewModel> GetUserInfoById(string userId);
     Task<SideBarViewModel> GetSideBarData(string userName);
     Task<EditProfileViewModel> GetDataForEditUserProfile(string userName);
     Task<bool> EditProfile(string userName, EditProfileViewModel viewModel);

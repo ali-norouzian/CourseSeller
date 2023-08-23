@@ -16,4 +16,5 @@ public interface IAccountService
     Task<User> GetUserByActiveCode(string userId, string activeCode);
     Task<bool> ResetPassword(User user, string newPassword);
     Task<string> GetUserIdByUserName(string userName);
+    Task<User> GetUserByUserId(string userId);
 }

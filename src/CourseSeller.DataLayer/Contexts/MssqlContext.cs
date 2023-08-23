@@ -11,6 +11,15 @@ namespace CourseSeller.DataLayer.Contexts
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Only query in this users
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => u.IsDelete == false);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
 
         #region Users
 
