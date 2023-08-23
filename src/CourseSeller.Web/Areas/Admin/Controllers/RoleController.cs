@@ -12,10 +12,12 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
     public class RoleController : Controller
     {
         private readonly IRoleService _roleService;
+        private readonly IPermissionService _permissionService;
 
-        public RoleController(IRoleService roleService)
+        public RoleController(IRoleService roleService, IPermissionService permissionService)
         {
             _roleService = roleService;
+            _permissionService = permissionService;
         }
 
         [Route("[area]/Roles")]
@@ -29,17 +31,20 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         [Route("/[area]/Roles/Create")]
         public async Task<IActionResult> CreateRole()
         {
+            ViewData["Permissions"] = await _permissionService.GetAll();
+
             return View();
         }
 
         [HttpPost]
         [Route("/[area]/Roles/Create")]
-        public async Task<IActionResult> CreateRole(Role viewModel)
+        public async Task<IActionResult> CreateRole(Role viewModel, List<int> selectedPermission)
         {
             if (!ModelState.IsValid)
                 return View(viewModel);
 
             var roleId = await _roleService.AddRole(viewModel);
+            await _permissionService.AddPermissionsToRole(roleId, selectedPermission);
 
             return RedirectToAction(nameof(Index));
         }
@@ -47,17 +52,21 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         [Route("/[area]/Roles/Edit/{id}")]
         public async Task<IActionResult> EditRole(int id)
         {
+            ViewData["Permissions"] = await _permissionService.GetAll();
+            ViewData["SelectedPermissions"] = await _permissionService.GetRoleSelectedPermissionsId(id);
+
             return View(await _roleService.GetRoleById(id));
         }
 
         [HttpPost]
         [Route("/[area]/Roles/Edit/{id}")]
-        public async Task<IActionResult> EditRole(Role viewModel)
+        public async Task<IActionResult> EditRole(Role viewModel, List<int> selectedPermission)
         {
             if (!ModelState.IsValid)
                 return View(viewModel);
 
             await _roleService.UpdateRole(viewModel);
+            await _permissionService.UpdateRolePermission(viewModel.RoleID, selectedPermission);
 
             return RedirectToAction(nameof(Index));
         }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CourseSeller.DataLayer.Entities.Permissions;
 
 namespace CourseSeller.DataLayer.Entities.Users
 {
@@ -18,6 +19,7 @@ namespace CourseSeller.DataLayer.Entities.Users
         #region Relations
 
         public List<UserRole> UserRoles { get; set; }
+        public List<RolePermission> RolePermissions { get; set; }
 
         #endregion
     }

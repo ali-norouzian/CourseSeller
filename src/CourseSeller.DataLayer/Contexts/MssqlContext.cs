@@ -1,4 +1,5 @@
-﻿using CourseSeller.DataLayer.Entities.Users;
+﻿using CourseSeller.DataLayer.Entities.Permissions;
+using CourseSeller.DataLayer.Entities.Users;
 using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,14 @@ namespace CourseSeller.DataLayer.Contexts
 
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<WalletType> WalletTypes { get; set; }
+
+        #endregion
+
+
+        #region Permission
+
+        public DbSet<Permission> Permission { get; set; }
+        public DbSet<RolePermission> RolePermission { get; set; }
 
         #endregion
 

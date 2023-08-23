@@ -4,6 +4,7 @@ using CourseSeller.DataLayer.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseSeller.DataLayer.Migrations
 {
     [DbContext(typeof(MssqlContext))]
-    partial class MssqlContextModelSnapshot : ModelSnapshot
+    [Migration("20230823083919_PermissionsAdded")]
+    partial class PermissionsAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +44,7 @@ namespace CourseSeller.DataLayer.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Permission", (string)null);
+                    b.ToTable("Permission");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Permissions.RolePermission", b =>
@@ -65,7 +67,7 @@ namespace CourseSeller.DataLayer.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RolePermission", (string)null);
+                    b.ToTable("RolePermission");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Users.Role", b =>
@@ -86,7 +88,7 @@ namespace CourseSeller.DataLayer.Migrations
 
                     b.HasKey("RoleID");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Users.User", b =>
@@ -140,7 +142,7 @@ namespace CourseSeller.DataLayer.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Users.UserRole", b =>
@@ -163,7 +165,7 @@ namespace CourseSeller.DataLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Wallets.Wallet", b =>
@@ -203,7 +205,7 @@ namespace CourseSeller.DataLayer.Migrations
 
                     b.HasIndex("WalletTypeTypeId");
 
-                    b.ToTable("Wallets", (string)null);
+                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Wallets.WalletType", b =>
@@ -218,7 +220,7 @@ namespace CourseSeller.DataLayer.Migrations
 
                     b.HasKey("TypeId");
 
-                    b.ToTable("WalletTypes", (string)null);
+                    b.ToTable("WalletTypes");
                 });
 
             modelBuilder.Entity("CourseSeller.DataLayer.Entities.Permissions.Permission", b =>

@@ -39,6 +39,15 @@ VALUES
 	(N'استاد'),
 	(N'کاربر عادی')
 
+INSERT INTO [dbo].[Permission]
+           ([PermissionTitle]
+           ,[ParentId])
+VALUES
+    (N'پنل مدیریت', null),
+	(N'مدیریت کاربران', 1),
+	(N'افزودن کاربر', 2),
+	(N'ویرایش کاربر', 2),
+	(N'حذف کاربر', 2)
 
 GO
 

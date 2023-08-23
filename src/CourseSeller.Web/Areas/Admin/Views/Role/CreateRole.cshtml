@@ -1,7 +1,8 @@
-﻿@model CourseSeller.DataLayer.Entities.Users.Role
+﻿@using CourseSeller.DataLayer.Entities.Permissions
+@model CourseSeller.DataLayer.Entities.Users.Role
 @{
     ViewData["Title"] = "افزودن نقش";
-    // List<Permission> permissions = ViewData["Permissions"] as List<Permission>;
+    List<Permission> permissions = ViewData["Permissions"] as List<Permission>;
 }
 
 
@@ -37,24 +38,24 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    @* <ul>
-                        @foreach (var permission in permissions.Where(p => p.ParentID == null))
+                    <ul>
+                        @foreach (var permission in permissions.Where(p => p.ParentId == null))
                         {
                             <li>
                                 <input type="checkbox" name="SelectedPermission" value="@permission.PermissionId" /> @permission.PermissionTitle
 
-                                @if (permissions.Any(p => p.ParentID == permission.ParentID))
+                                @if (permissions.Any(p => p.ParentId == permission.ParentId))
                                 {
                                     <ul>
-                                        @foreach (var sub in permissions.Where(p => p.ParentID == permission.PermissionId))
+                                        @foreach (var sub in permissions.Where(p => p.ParentId == permission.PermissionId))
                                         {
                                             <li>
                                                 <input type="checkbox" name="SelectedPermission" value="@sub.PermissionId" /> @sub.PermissionTitle
-                                                @if (permissions.Any(p => p.ParentID == sub.ParentID))
+                                                @if (permissions.Any(p => p.ParentId == sub.ParentId))
                                                 {
                                                     <ul>
 
-                                                        @foreach (var sub2 in permissions.Where(p => p.ParentID == sub.PermissionId))
+                                                        @foreach (var sub2 in permissions.Where(p => p.ParentId == sub.PermissionId))
                                                         {
                                                             <li>
                                                                 <input type="checkbox" name="SelectedPermission" value="@sub2.PermissionId" /> @sub2.PermissionTitle
@@ -68,7 +69,7 @@
                                 }
                             </li>
                         }
-                    </ul> *@
+                    </ul>
                 </div>
                 <!-- /.panel-body -->
             </div>
