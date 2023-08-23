@@ -1,4 +1,5 @@
 ﻿using CourseSeller.Core.DTOs.Admin;
+using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,14 @@ public class UserController : Controller
         _userPanelService = userPanelService;
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.PanelManagementId)]
     [Route("/[area]")]
     public IActionResult Index()
     {
         return View();
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.UsersManagementId)]
     [Route("/[area]/[action]")]
     public async Task<IActionResult> Users(int pageId = 1, string filterEmail = "", string filterUserName = "")
     {
@@ -32,6 +35,8 @@ public class UserController : Controller
         return View(users);
     }
 
+
+    [PermissionChecker(PermissionCheckerAttribute.DeleteUserId)]
     [Route("/[area]/Users/Deleted")]
     public async Task<IActionResult> DeletedUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
     {
@@ -40,6 +45,7 @@ public class UserController : Controller
         return View(users);
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.CreateUserId)]
     [Route("/[area]/Users/Create")]
     public async Task<IActionResult> CreateUser()
     {
@@ -48,6 +54,7 @@ public class UserController : Controller
         return View();
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.CreateUserId)]
     [HttpPost]
     [Route("/[area]/Users/Create")]
     public async Task<IActionResult> CreateUser(CreateUserViewModel viewModel)
@@ -60,6 +67,7 @@ public class UserController : Controller
         return RedirectToAction(nameof(Users));
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.EditUserId)]
     [Route("/[area]/Users/Update/{id}")]
     public async Task<IActionResult> EditUser(string id)
     {
@@ -68,6 +76,7 @@ public class UserController : Controller
         return View(await _adminService.GetUserInfoForUpdate(id));
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.EditUserId)]
     [HttpPost]
     [Route("/[area]/Users/Update/{id}")]
     public async Task<IActionResult> EditUser(EditUserViewModel viewModel)
@@ -80,6 +89,7 @@ public class UserController : Controller
         return Redirect(Request.Path);
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.DeleteUserId)]
     [Route("/[area]/Users/Delete/{id}")]
     public async Task<IActionResult> DeleteUser(string id)
     {
@@ -88,6 +98,7 @@ public class UserController : Controller
         return View(await _userPanelService.GetUserInfoById(id));
     }
 
+    [PermissionChecker(PermissionCheckerAttribute.DeleteUserId)]
     [HttpPost]
     [Route("/[area]/Users/Delete/{id}")]
     public async Task<IActionResult> DeleteUser(EditUserViewModel viewModel)

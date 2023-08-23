@@ -51,5 +51,25 @@ public class PermissionService : IPermissionService
         _context.RolePermission.RemoveRange(rolePermissions);
         await AddPermissionsToRole(roleId, permissions);
     }
+
+    public async Task<bool> UserHasPermission(int permissionId, string userName)
+    {
+        var userId = (await _context.Users.SingleAsync(u => u.UserName == userName)).UserId;
+        var userRolesId = await _context.UserRoles
+            .Where(r => r.UserId == userId)
+            .Select(r => r.RoleId)
+            .ToListAsync();
+
+        if (!userRolesId.Any())
+            return false;
+
+        var rolesPermission = await _context.RolePermission
+            .Where(p => p.PermissionId == permissionId)
+            .Select(p => p.RoleId)
+            .ToListAsync();
+
+        return rolesPermission
+            .Any(p => userRolesId.Contains(p));
+    }
 }
 

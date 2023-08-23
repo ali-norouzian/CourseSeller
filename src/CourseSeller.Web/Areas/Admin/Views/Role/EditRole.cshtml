@@ -5,6 +5,25 @@
     List<Permission> permissions = ViewData["Permissions"] as List<Permission>;
 }
 
+@section Styles
+    {
+    <style>
+
+        ul, ol, li {
+            list-style-type: none;
+        }
+
+        .pr-0{
+            padding-right:0;
+        }
+
+        .pr-5p{
+            padding-right: 10%;
+        }
+
+    </style>
+}
+
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">ویرایش نقش</h1>
@@ -42,7 +61,7 @@
                     @{
                         List<int> SelectedPermissions = ViewData["SelectedPermissions"] as List<int>;
                     }
-                    <ul>
+                    <ul class="pr-0">
                         @foreach (var permission in permissions.Where(p => p.ParentId == null))
                         {
                             <li>
@@ -50,14 +69,14 @@
 
                                 @if (permissions.Any(p => p.ParentId == permission.ParentId))
                                 {
-                                    <ul>
+                                    <ul class="pr-5p">
                                         @foreach (var sub in permissions.Where(p => p.ParentId == permission.PermissionId))
                                         {
                                             <li>
                                                 <input type="checkbox" @((SelectedPermissions.Any(p => p == sub.PermissionId) ? "checked" : "")) name="SelectedPermission" value="@sub.PermissionId" /> @sub.PermissionTitle
                                                 @if (permissions.Any(p => p.ParentId == sub.ParentId))
                                                 {
-                                                    <ul>
+                                                    <ul class="pr-5p">
 
                                                         @foreach (var sub2 in permissions.Where(p => p.ParentId == sub.PermissionId))
                                                         {

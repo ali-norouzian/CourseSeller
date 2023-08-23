@@ -1,5 +1,4 @@
-﻿using CourseSeller.Core.DTOs.Admin;
-using CourseSeller.Core.Services;
+﻿using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Entities.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +19,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             _permissionService = permissionService;
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.RoleManagementId)]
         [Route("[area]/Roles")]
         public async Task<IActionResult> Index()
         {
@@ -28,6 +28,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return View();
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.CreateRoleId)]
         [Route("/[area]/Roles/Create")]
         public async Task<IActionResult> CreateRole()
         {
@@ -36,6 +37,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return View();
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.CreateRoleId)]
         [HttpPost]
         [Route("/[area]/Roles/Create")]
         public async Task<IActionResult> CreateRole(Role viewModel, List<int> selectedPermission)
@@ -49,6 +51,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.EditRoleId)]
         [Route("/[area]/Roles/Edit/{id}")]
         public async Task<IActionResult> EditRole(int id)
         {
@@ -58,6 +61,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return View(await _roleService.GetRoleById(id));
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.EditRoleId)]
         [HttpPost]
         [Route("/[area]/Roles/Edit/{id}")]
         public async Task<IActionResult> EditRole(Role viewModel, List<int> selectedPermission)
@@ -71,12 +75,14 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.DeleteRoleId)]
         [Route("/[area]/Roles/Delete/{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             return View(await _roleService.GetRoleById(id));
         }
 
+        [PermissionChecker(PermissionCheckerAttribute.DeleteRoleId)]
         [HttpPost]
         [Route("/[area]/Roles/Delete/{id}")]
         public async Task<IActionResult> DeleteRole(Role viewModel)
