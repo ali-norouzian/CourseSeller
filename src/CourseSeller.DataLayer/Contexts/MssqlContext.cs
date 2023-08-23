@@ -16,6 +16,8 @@ namespace CourseSeller.DataLayer.Contexts
             // Only query in this users
             modelBuilder.Entity<User>()
                 .HasQueryFilter(u => u.IsDelete == false);
+            modelBuilder.Entity<Role>()
+                .HasQueryFilter(r => r.IsDelete == false);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -70,7 +70,7 @@
                                 @* @if (_PermissionService.CheckPermission(1002, User.Identity.Name))
                                 { *@
                                     <li>
-                                        <a href="/admin/roles">دسترسی ها</a>
+                                    <a asp-area="Admin" asp-controller="Role" asp-action="Index">دسترسی ها</a>
                                     </li>
                                 @* } *@
                                 <li>

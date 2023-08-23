@@ -74,6 +74,7 @@ services.AddTransient<ISendEmail, SendEmail>();
 services.AddTransient<IAccountService, AccountService>();
 services.AddTransient<IUserPanelService, UserPanelService>();
 services.AddTransient<IAdminService, AdminService>();
+services.AddTransient<IRoleService, RoleService>();
 
 #endregion
 
