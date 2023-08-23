@@ -41,7 +41,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" asp-area="Admin" asp-controller="Home" asp-action="Index">@conf["SiteName"]</a>
+                <a class="navbar-brand" asp-area="Admin" asp-controller="User" asp-action="Index">@conf["SiteName"]</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -62,7 +62,7 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a asp-area="Admin" asp-controller="Home" asp-action="Index"><i class="fa fa-dashboard fa-fw"></i> پنل ادمین</a>
+                            <a asp-area="Admin" asp-controller="User" asp-action="Index"><i class="fa fa-dashboard fa-fw"></i> پنل ادمین</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> مدیریت کاربران<span class="fa arrow"></span></a>
@@ -74,10 +74,10 @@
                                     </li>
                                 @* } *@
                                 <li>
-                                    <a asp-area="Admin" asp-controller="Home" asp-action="Users">کاربران</a>
+                                    <a asp-area="Admin" asp-controller="User" asp-action="Users">کاربران</a>
                                 </li>
                                 <li>
-                                    <a asp-area="Admin" asp-controller="Home" asp-action="DeletedUsers"> کاربران حذف شده</a>
+                                    <a asp-area="Admin" asp-controller="User" asp-action="DeletedUsers"> کاربران حذف شده</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

@@ -7,17 +7,18 @@ namespace CourseSeller.Web.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize]
-public class HomeController : Controller
+public class UserController : Controller
 {
     private readonly IAdminService _adminService;
     private readonly IUserPanelService _userPanelService;
 
-    public HomeController(IAdminService adminService, IUserPanelService userPanelService)
+    public UserController(IAdminService adminService, IUserPanelService userPanelService)
     {
         _adminService = adminService;
         _userPanelService = userPanelService;
     }
 
+    [Route("/[area]")]
     public IActionResult Index()
     {
         return View();
