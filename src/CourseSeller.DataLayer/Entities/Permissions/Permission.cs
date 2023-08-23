@@ -5,7 +5,7 @@ namespace CourseSeller.DataLayer.Entities.Permissions
 {
     public class Permission
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key]
         public int PermissionId { get; set; }
 
         [Display(Name = "عنوان دسترسی")]

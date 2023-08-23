@@ -1,0 +1,34 @@
+﻿@model IEnumerable<CourseSeller.DataLayer.Entities.Courses.CourseGroup>
+
+<div class="main-menu">
+    <div class="container">
+        <nav>
+            <span class="responsive-sign"><i class="zmdi zmdi-menu"></i></span>
+            <ul>
+
+                @foreach (var cg in Model.Where(cg => cg.ParentId == null))
+                {
+                    <li>
+                        <a href=""> @cg.GroupTitle </a>
+
+                        @if (Model.Any(c => c.ParentId == cg.GroupId))
+                        {
+                            <ul>
+
+                                @foreach (var subCg in Model.Where(c => c.ParentId == cg.GroupId))
+                                {
+                                    <li>
+                                        <a href="#"> @subCg.GroupTitle </a>
+                                    </li>
+                                }
+
+                            </ul>
+                        }
+
+                    </li>
+                }
+
+            </ul>
+        </nav>
+    </div>
+</div>

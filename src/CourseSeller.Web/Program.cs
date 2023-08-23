@@ -76,6 +76,7 @@ services.AddTransient<IUserPanelService, UserPanelService>();
 services.AddTransient<IAdminService, AdminService>();
 services.AddTransient<IRoleService, RoleService>();
 services.AddTransient<IPermissionService, PermissionService>();
+services.AddTransient<ICourseService, CourseService>();
 
 #endregion
 

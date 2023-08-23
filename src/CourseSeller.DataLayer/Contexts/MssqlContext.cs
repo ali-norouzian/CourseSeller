@@ -1,4 +1,5 @@
-﻿using CourseSeller.DataLayer.Entities.Permissions;
+﻿using CourseSeller.DataLayer.Entities.Courses;
+using CourseSeller.DataLayer.Entities.Permissions;
 using CourseSeller.DataLayer.Entities.Users;
 using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,8 @@ namespace CourseSeller.DataLayer.Contexts
                 .HasQueryFilter(u => u.IsDelete == false);
             modelBuilder.Entity<Role>()
                 .HasQueryFilter(r => r.IsDelete == false);
+            modelBuilder.Entity<CourseGroup>()
+                .HasQueryFilter(cg => cg.IsDelete == false);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -45,6 +48,13 @@ namespace CourseSeller.DataLayer.Contexts
 
         public DbSet<Permission> Permission { get; set; }
         public DbSet<RolePermission> RolePermission { get; set; }
+
+        #endregion
+
+
+        #region Courses
+
+        public DbSet<CourseGroup> CourseGroups { get; set; }
 
         #endregion
 

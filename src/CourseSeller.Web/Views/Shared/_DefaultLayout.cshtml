@@ -44,20 +44,20 @@
                                         padding: 0;
                                     }
 
-                                    #mybtn:hover {
-                                        text-decoration: none;
-                                        color: darkred;
-                                    }
+                                        #mybtn:hover {
+                                            text-decoration: none;
+                                            color: darkred;
+                                        }
                                 </style>
                             }
-                            
+
                             else
                             {
-                            <div class="signin ">
-                                <i class="zmdi zmdi-account"></i>
-                                <a asp-controller="Account" asp-action="Login"> ورود </a> /
-                                <a asp-controller="Account" asp-action="Register"> عضویت </a>
-                            </div>
+                                <div class="signin ">
+                                    <i class="zmdi zmdi-account"></i>
+                                    <a asp-controller="Account" asp-action="Login"> ورود </a> /
+                                    <a asp-controller="Account" asp-action="Register"> عضویت </a>
+                                </div>
                             }
                         </div>
                     </div>
@@ -70,7 +70,7 @@
     </div>
 
     <!-- main manu -->
-    <partial name="_MainMenu" />
+    @await Component.InvokeAsync("CourseGroup")
     <!-- /main manu -->
     <!-- content -->
     @RenderBody()
