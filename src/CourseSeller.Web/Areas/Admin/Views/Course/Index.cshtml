@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<CourseSeller.Core.DTOs.Course.ShowCourseInAdminViewModel>
+@{
     ViewData["Title"] = "لیست دوره ها";
 }
 
@@ -33,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @* @foreach (var item in Model.ListCourse)
+                        @foreach (var item in Model)
                         {
                             <tr>
                                 <td>
@@ -46,15 +47,15 @@
                                     @item.EpisodeCount
                                 </td>
                                 <td>
-                                    <a href="/Admin/Courses/EditCourse/@item.CourseId" class="btn btn-warning btn-sm">
+                                    <a asp-area="Admin" asp-controller="Course" asp-action="UpdateCourse" asp-route-Id="@item.CourseId" class="btn btn-warning btn-sm">
                                         ویرایش
                                     </a>
-                                    <a href="/Admin/Courses/IndexEpisode/@item.CourseId" class="btn btn-warning btn-sm">
+                                    <a asp-area="Admin" asp-controller="Course" asp-action="AddEpisode" asp-route-Id="@item.CourseId" class="btn btn-success btn-sm">
                                         افزودن بخش
                                     </a>
                                 </td>
                             </tr>
-                        } *@
+                        } 
                     </tbody>
                 </table>
 

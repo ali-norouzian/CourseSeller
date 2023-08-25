@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label>گروه فرعی</label>
-                <select class="form-control" asp-for="SubGroup" asp-items="@(ViewData["SubGroups"] as SelectList)"></select>
+                <select class="form-control" asp-for="SubGroupId" asp-items="@(ViewData["SubGroups"] as SelectList)"></select>
                 <span asp-validation-for="SubGroup"></span>
             </div>
             <div class="form-group">
@@ -53,7 +53,7 @@
         </div>
         <div class="col-md-4">
             <p></p>
-            <img id="imgCourse" class="thumbnail" src="/UserAvatars/Default.png" />
+            <img id="imgCourse" class="thumbnail" src="/Courses/Images/Default.png" />
             <div class="form-group">
                 <label>انتخاب تصویر</label>
                 <input type="file" name="imgCourseUp" id="imgCourseUp">
@@ -93,7 +93,7 @@
         $(document).ready(function () {
             $('#TeacherId').select2();
             $('#GroupId').select2();
-            $('#SubGroup').select2();
+            $('#SubGroupId').select2();
 
         });
     </script>
@@ -101,12 +101,12 @@
 
     <script>
         $("#GroupId").change(function () {
-            $("#SubGroup").empty();
+            $("#SubGroupId").empty();
             $.getJSON("/Admin/Courses/GetSubGroups/" + $("#GroupId :selected").val(),
                 function (data) {
                     $.each(data,
                         function () {
-                            $("#SubGroup").append('<option value=' + this.value + '>' + this.text + '</option>');
+                            $("#SubGroupId").append('<option value=' + this.value + '>' + this.text + '</option>');
 
                         });
                 });

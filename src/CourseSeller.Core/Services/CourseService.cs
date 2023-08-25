@@ -1,6 +1,9 @@
-﻿using CourseSeller.Core.Services.Interfaces;
+﻿using CourseSeller.Core.DTOs.Course;
+using CourseSeller.Core.Generators;
+using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Courses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -109,5 +112,40 @@ public class CourseService : ICourseService
         var selectList = new SelectList(selectListItems, "Value", "Text");
 
         return selectList;
+    }
+
+    public async Task<int> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
+    {
+        course.CreateDateTime = DateTime.Now;
+
+        // We had new image to upload
+        if (imgCourseUp != null)
+        {
+            // Save new image
+            course.CourseImageName =
+                $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(imgCourseUp.FileName)}";
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Images",
+                course.CourseImageName);
+            await using var stream = new FileStream(imagePath, FileMode.Create);
+            await imgCourseUp.CopyToAsync(stream);
+        }
+
+        // todo: demo
+
+        await _context.Courses.AddAsync(course);
+        await _context.SaveChangesAsync();
+
+        return course.CourseId;
+    }
+
+    public async Task<List<ShowCourseInAdminViewModel>> GetAllCoursesForAdmin()
+    {
+        return await _context.Courses.Select(c => new ShowCourseInAdminViewModel()
+        {
+            CourseId = c.CourseId,
+            ImageName = c.CourseImageName,
+            Title = c.CourseTitle,
+            EpisodeCount = c.CourseEpisodes.Count
+        }).ToListAsync();
     }
 }

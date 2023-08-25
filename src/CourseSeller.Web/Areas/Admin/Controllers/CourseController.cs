@@ -1,7 +1,7 @@
 ﻿using CourseSeller.Core.Services.Interfaces;
+using CourseSeller.DataLayer.Entities.Courses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CourseSeller.Web.Areas.Admin.Controllers
 {
@@ -19,7 +19,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         [Route("[area]/Courses")]
         public async Task<IActionResult> Index()
         {
-            return View();
+            return View(await _courseService.GetAllCoursesForAdmin());
         }
 
         [Route("[area]/Courses/Create")]
@@ -39,14 +39,26 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return View();
         }
 
+        // Its for GET:CreateCourse
         [Route("[area]/Courses/GetSubGroups/{id}")]
         public async Task<IActionResult> GetSubGroups(int id)
         {
             var subGroups = await _courseService.GetSubGroupsForManageCourse(id);
 
-
-
             return new JsonResult(subGroups);
         }
+
+        [HttpPost]
+        [Route("[area]/Courses/Create")]
+        public async Task<IActionResult> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
+        {
+            //if (!ModelState.IsValid)
+            //    return View(course);
+
+            await _courseService.CreateCourse(course, imgCourseUp, demoUp);
+
+            return View(course);
+        }
+
     }
 }
