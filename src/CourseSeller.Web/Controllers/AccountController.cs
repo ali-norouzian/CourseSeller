@@ -10,9 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CourseSeller.Core.Senders;
-using CourseSeller.DataLayer.Contexts;
 using Hangfire;
-using CourseSeller.Core.Services;
 
 namespace CourseSeller.Web.Controllers
 {
@@ -103,7 +101,7 @@ namespace CourseSeller.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginViewModel viewModel)
+        public async Task<IActionResult> Login(LoginViewModel viewModel, [FromQuery] string ReturnUrl)
         {
             bool errorFlag = !ModelState.IsValid;
 
@@ -147,6 +145,7 @@ namespace CourseSeller.Web.Controllers
 
                 ViewData["IsSuccess"] = true;
 
+                ViewData["ReturnUrl"] = !string.IsNullOrEmpty(ReturnUrl)?ReturnUrl:"/UserPanel";
 
                 return View();
             }
