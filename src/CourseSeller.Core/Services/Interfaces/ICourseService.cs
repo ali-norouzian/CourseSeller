@@ -10,13 +10,15 @@ public interface ICourseService
     #region Group
 
     Task<List<CourseGroup>> GetAll();
-    Task<SelectList> GetGroupsForManageCourse();
-    Task<SelectList> GetSubGroupsForManageCourse(int parentGroupId);
-    Task<SelectList> GetAllTeachers();
-    Task<SelectList> GetAllLevels();
-    Task<SelectList> GetAllStatus();
+    Task<SelectList> GetGroupsForManageCourse(int? selectedId = null);
+    Task<SelectList> GetSubGroupsForManageCourse(int parentGroupId, int? selectedId = null);
+    Task<SelectList> GetAllTeachers(string? selectedId = null);
+    Task<SelectList> GetAllLevels(int? selectedId = null);
+    Task<SelectList> GetAllStatus(int? selectedId = null);
     Task<int> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp);
     Task<List<ShowCourseInAdminViewModel>> GetAllCoursesForAdmin();
+    Task<Course> GetCourseById(int id);
+    Task UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp);
 
     #endregion
 }

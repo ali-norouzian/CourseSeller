@@ -1,5 +1,7 @@
-﻿using CourseSeller.Core.Services.Interfaces;
+﻿#nullable enable
+using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Entities.Courses;
+using CourseSeller.DataLayer.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,19 +24,24 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return View(await _courseService.GetAllCoursesForAdmin());
         }
 
+        private async Task SetViewModelsForCreateUpdate(Course? course = null)
+        {
+            var groups = await _courseService.GetGroupsForManageCourse(course?.GroupId);
+            ViewData["Groups"] = groups;
+            var subGroups = await _courseService.GetSubGroupsForManageCourse(int.Parse(groups.First().Value), course?.SubGroupId);
+            ViewData["SubGroups"] = subGroups;
+            var teachers = await _courseService.GetAllTeachers(course?.TeacherId);
+            ViewData["Teachers"] = teachers;
+            var levels = await _courseService.GetAllLevels(course?.LevelId);
+            ViewData["Levels"] = levels;
+            var statuses = await _courseService.GetAllStatus(course?.StatusId);
+            ViewData["Statuses"] = statuses;
+        }
+
         [Route("[area]/Courses/Create")]
         public async Task<IActionResult> CreateCourse()
         {
-            var groups = await _courseService.GetGroupsForManageCourse();
-            ViewData["Groups"] = groups;
-            var subGroups = await _courseService.GetSubGroupsForManageCourse(int.Parse(groups.First().Value));
-            ViewData["SubGroups"] = subGroups;
-            var teachers = await _courseService.GetAllTeachers();
-            ViewData["Teachers"] = teachers;
-            var levels = await _courseService.GetAllLevels();
-            ViewData["Levels"] = levels;
-            var statuses = await _courseService.GetAllStatus();
-            ViewData["Statuses"] = statuses;
+            await SetViewModelsForCreateUpdate();
 
             return View();
         }
@@ -81,6 +88,32 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
 
 
             return Json(new { uploaded = true, url });
+        }
+
+        [Route("[area]/Courses/Update/{id}")]
+        public async Task<IActionResult> UpdateCourse(int id)
+        {
+            var course = await _courseService.GetCourseById(id);
+
+            await SetViewModelsForCreateUpdate(course);
+
+
+            return View(course);
+        }
+
+        [HttpPost]
+        [Route("[area]/Courses/Update/{id}")]
+        public async Task<IActionResult> UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
+        {
+            if (!ModelState.IsValid)
+                return View(course);
+
+            // ToDo: Chceck he want to access to files that is for him. not other people images.
+
+            await _courseService.UpdateCourse(course, imgCourseUp, demoUp);
+
+
+            return View();
         }
     }
 }

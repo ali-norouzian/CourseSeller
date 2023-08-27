@@ -110,10 +110,9 @@ public class UserPanelService : IUserPanelService
                 $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(viewModel.UserAvatar.FileName)}";
             imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars",
                 viewModel.AvatarName);
-            using (var stream = new FileStream(imagePath, FileMode.Create))
-            {
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
                 await viewModel.UserAvatar.CopyToAsync(stream);
-            }
+
         }
         // Edit user info
         var user = await _accountService.GetUserByUserName(userName);

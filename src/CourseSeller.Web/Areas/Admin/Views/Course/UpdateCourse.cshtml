@@ -1,10 +1,15 @@
 ﻿@model CourseSeller.DataLayer.Entities.Courses.Course
 @{
-    ViewData["Title"] = "افزودن دوره جدید";
+    ViewData["Title"] = "ویرایش دوره";
 }
 
 <div class="row">
     <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="CreateDateTime" />
+        <input type="hidden" asp-for="CourseId" />
+        <input type="hidden" asp-for="CourseImageName" />
+        <input type="hidden" asp-for="DemoFileName" />
+
         <div class="col-md-8">
             <h2>اطلاعات دوره</h2>
             <hr />
@@ -35,7 +40,7 @@
             </div>
             <div class="form-group">
                 <label>قیمت دوره</label>
-                <input type="number" asp-for="CoursePrice"  class="form-control" />
+                <input type="number" asp-for="CoursePrice" class="form-control" />
                 <span asp-validation-for="CourseDescription"></span>
             </div>
             <div class="form-group">
@@ -53,7 +58,7 @@
         </div>
         <div class="col-md-4">
             <p></p>
-            <img id="imgCourse" class="thumbnail" src="/Courses/Images/Default.png" />
+            <img id="imgCourse" class="thumbnail" src="/Courses/Images/@Model.CourseImageName" />
             <div class="form-group">
                 <label>انتخاب تصویر</label>
                 <input type="file" name="imgCourseUp" id="imgCourseUp">
@@ -74,7 +79,7 @@
 
 @section Scripts
     {
-    
+
 
     <script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>
     <script>

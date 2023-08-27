@@ -29,7 +29,7 @@ public class CourseService : ICourseService
     }
 
     // It create select list for html
-    public async Task<SelectList> GetGroupsForManageCourse()
+    public async Task<SelectList> GetGroupsForManageCourse(int? selectedId = null)
     {
         // SelectList need list of SelectListItem
         var selectListItems = await _context.CourseGroups.Where(g => g.ParentId == null)
@@ -41,13 +41,13 @@ public class CourseService : ICourseService
                 .ToListAsync();
 
         // It can render to SelectList
-        var selectList = new SelectList(selectListItems, "Value", "Text");
+        var selectList = new SelectList(selectListItems, "Value", "Text", selectedId);
 
         return selectList;
     }
 
     // It create select list for html
-    public async Task<SelectList> GetSubGroupsForManageCourse(int parentGroupId)
+    public async Task<SelectList> GetSubGroupsForManageCourse(int parentGroupId, int? selectedId = null)
     {
         var firstSelectListItem = new List<SelectListItem>() { new SelectListItem() { Text = "انتخاب کنید", Value = "" } };
 
@@ -63,12 +63,12 @@ public class CourseService : ICourseService
         var selectListItems = firstSelectListItem.Concat(dbSelectListItems);
 
         // It can render to SelectList
-        var selectList = new SelectList(selectListItems, "Value", "Text");
+        var selectList = new SelectList(selectListItems, "Value", "Text", selectedId);
 
         return selectList;
     }
 
-    public async Task<SelectList> GetAllTeachers()
+    public async Task<SelectList> GetAllTeachers(string? selectedId = null)
     {
         // SelectList need list of SelectListItem
         var selectListItems = await _context.UserRoles.Where(u => u.RoleId == TeacherRoleId)
@@ -80,12 +80,12 @@ public class CourseService : ICourseService
                                         })
                                         .ToListAsync();
         // SelectListItem can render to SelectList
-        var selectList = new SelectList(selectListItems, "Value", "Text");
+        var selectList = new SelectList(selectListItems, "Value", "Text", selectedId);
 
         return selectList;
     }
 
-    public async Task<SelectList> GetAllLevels()
+    public async Task<SelectList> GetAllLevels(int? selectedId = null)
     {
         // SelectList need list of SelectListItem
         var selectListItems = await _context.CourseLevels
@@ -96,12 +96,12 @@ public class CourseService : ICourseService
             })
             .ToListAsync();
         // SelectListItem can render to SelectList
-        var selectList = new SelectList(selectListItems, "Value", "Text");
+        var selectList = new SelectList(selectListItems, "Value", "Text", selectedId);
 
         return selectList;
     }
 
-    public async Task<SelectList> GetAllStatus()
+    public async Task<SelectList> GetAllStatus(int? selectedId = null)
     {
         // SelectList need list of SelectListItem
         var selectListItems = await _context.CourseStatus
@@ -112,7 +112,7 @@ public class CourseService : ICourseService
             })
             .ToListAsync();
         // SelectListItem can render to SelectList
-        var selectList = new SelectList(selectListItems, "Value", "Text");
+        var selectList = new SelectList(selectListItems, "Value", "Text", selectedId);
 
         return selectList;
     }
@@ -167,5 +167,76 @@ public class CourseService : ICourseService
             Title = c.CourseTitle,
             EpisodeCount = c.CourseEpisodes.Count
         }).ToListAsync();
+    }
+
+    public async Task<Course> GetCourseById(int id)
+    {
+        return await _context.Courses.FindAsync(id);
+    }
+
+    public async Task UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
+    {
+        course.UpdateDateTime = DateTime.Now;
+
+        // We had new image to upload
+        if (imgCourseUp != null && await _imageUtils.ImageIsValid(imgCourseUp))
+        {
+            if (course.CourseImageName != "Default.png")
+            {
+                var deleteImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Images",
+                    course.DemoFileName);
+                // We can do soft delete and hold use old images in a folder for security purpose
+                // BUG: We have roleback db on error but we havent it on delete file!
+                if (File.Exists(deleteImagePath))
+                    File.Delete(deleteImagePath);
+
+                var deleteThumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Thumb",
+                    course.DemoFileName);
+                // We can do soft delete and hold use old images in a folder for security purpose
+                // BUG: We have roleback db on error but we havent it on delete file!
+                if (File.Exists(deleteThumbPath))
+                    File.Delete(deleteThumbPath);
+            }
+
+            // Save new image
+            course.CourseImageName =
+                 $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(imgCourseUp.FileName)}";
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Images",
+                course.CourseImageName);
+            // This using is auto dispose!
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await imgCourseUp.CopyToAsync(stream);
+
+            // Create resized thumbnail
+            var thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Thumb", course.CourseImageName);
+            await _imageUtils.ImageResize(imagePath, thumbPath, 150, 150);
+        }
+
+        // Demo
+        if (demoUp != null)
+        {
+            if (course.DemoFileName != null)
+            {
+                var deleteDemoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Demos",
+                    course.DemoFileName);
+                // We can do soft delete and hold use old images in a folder for security purpose
+                // BUG: We have roleback db on error but we havent it on delete file!
+                if (File.Exists(deleteDemoPath))
+                    File.Delete(deleteDemoPath);
+            }
+
+            // Save new image
+            course.DemoFileName =
+                $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(demoUp.FileName)}";
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Demos",
+                course.DemoFileName);
+            // This using is auto dispose!
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await demoUp.CopyToAsync(stream);
+        }
+
+
+        _context.Courses.Update(course);
+        await _context.SaveChangesAsync();
     }
 }
