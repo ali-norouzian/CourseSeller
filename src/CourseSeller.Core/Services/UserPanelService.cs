@@ -1,4 +1,5 @@
-﻿using CourseSeller.Core.DTOs.UserPanel;
+﻿using CourseSeller.Core.Convertors;
+using CourseSeller.Core.DTOs.UserPanel;
 using CourseSeller.Core.DTOs.UserPanel.Wallet;
 using CourseSeller.Core.Generators;
 using CourseSeller.Core.Security;
@@ -16,11 +17,13 @@ public class UserPanelService : IUserPanelService
 
     private readonly MssqlContext _context;
     private readonly IAccountService _accountService;
+    private readonly IPasswordHelper _passwordHelper;
 
-    public UserPanelService(MssqlContext context, IAccountService accountService)
+    public UserPanelService(MssqlContext context, IAccountService accountService, IPasswordHelper passwordHelper)
     {
         _context = context;
         _accountService = accountService;
+        _passwordHelper = passwordHelper;
     }
 
     public async Task<UserInfoViewModel> GetUserInfo(string userName)
@@ -146,9 +149,9 @@ public class UserPanelService : IUserPanelService
     {
         var user = await _accountService.GetUserByUserName(userName);
 
-        if (PasswordHelper.VerifyPassword(oldPassword, user.Password))
+        if (await _passwordHelper.VerifyPassword(oldPassword, user.Password))
         {
-            user.Password = PasswordHelper.HashPassword(newPassword);
+            user.Password = await _passwordHelper.HashPassword(newPassword);
 
             await _accountService.UpdateUser(user);
 

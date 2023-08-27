@@ -23,14 +23,16 @@ public class AccountService : IAccountService
     private readonly IBackgroundJobClient _backgroundJobClient;
     private readonly ISendEmail _sendEmail;
     private readonly IViewRenderService _viewRender;
+    private readonly IPasswordHelper _passwordHelper;
 
-    public AccountService(MssqlContext context, IConfiguration conf, IBackgroundJobClient backgroundJobClient, ISendEmail sendEmail, IViewRenderService viewRender)
+    public AccountService(MssqlContext context, IConfiguration conf, IBackgroundJobClient backgroundJobClient, ISendEmail sendEmail, IViewRenderService viewRender, IPasswordHelper passwordHelper)
     {
         _context = context;
         _conf = conf;
         _backgroundJobClient = backgroundJobClient;
         _sendEmail = sendEmail;
         _viewRender = viewRender;
+        _passwordHelper = passwordHelper;
     }
 
     public async Task<bool> IsExistUserName(string userName)
@@ -140,7 +142,7 @@ public class AccountService : IAccountService
 
     public async Task<bool> ResetPassword(User user, string newPassword)
     {
-        string hashedNewPassword = PasswordHelper.HashPassword(newPassword);
+        string hashedNewPassword = await _passwordHelper.HashPassword(newPassword);
         user.Password = hashedNewPassword;
         // expire old link to
         user.ActiveCode = CodeGenerators.Generate64ByteUniqueCode();

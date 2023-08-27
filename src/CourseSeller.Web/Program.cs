@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Hangfire;
 using Hangfire.SqlServer;
 using CourseSeller.Core.Convertors;
+using CourseSeller.Core.Security;
 using CourseSeller.Core.Senders;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -79,6 +80,7 @@ services.AddDbContext<MssqlContext>(options =>
 services.AddTransient<IViewRenderService, RenderViewToString>();
 services.AddTransient<ISendEmail, SendEmail>();
 services.AddTransient<IImageUtils, ImageUtils>();
+services.AddTransient<IPasswordHelper, PasswordHelper>();
 services.AddTransient<IAccountService, AccountService>();
 services.AddTransient<IUserPanelService, UserPanelService>();
 services.AddTransient<IAdminService, AdminService>();

@@ -20,15 +20,16 @@ namespace CourseSeller.Web.Controllers
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly ISendEmail _sendEmail;
         private readonly IViewRenderService _viewRender;
+        private readonly IPasswordHelper _passwordHelper;
 
-        public AccountController(IAccountService accountService, IBackgroundJobClient backgroundJobClient, ISendEmail sendEmail, IViewRenderService viewRender)
+        public AccountController(IAccountService accountService, IBackgroundJobClient backgroundJobClient, ISendEmail sendEmail, IViewRenderService viewRender, IPasswordHelper passwordHelper)
         {
             _accountService = accountService;
             _backgroundJobClient = backgroundJobClient;
             _sendEmail = sendEmail;
             _viewRender = viewRender;
+            _passwordHelper = passwordHelper;
         }
-
 
         #region Register
 
@@ -61,7 +62,7 @@ namespace CourseSeller.Web.Controllers
             if (errorFlag) { return View(viewModel); }
 
             // register 
-            User user = new()
+            User user = new User()
             {
                 UserId = CodeGenerators.Generate32ByteUniqueCode(),
                 ActiveCode = CodeGenerators.Generate64ByteUniqueCode(),
@@ -69,7 +70,7 @@ namespace CourseSeller.Web.Controllers
                 Email = FixText.FixEmail(viewModel.Email),
                 UserName = viewModel.UserName.ToLower(),
                 IsActive = false,
-                Password = PasswordHelper.HashPassword(viewModel.Password),
+                Password = await _passwordHelper.HashPassword(viewModel.Password),
                 RegisterDateTime = DateTime.Now,
                 UserAvatar = "Default.png",
             };
@@ -113,7 +114,7 @@ namespace CourseSeller.Web.Controllers
             }
             if (errorFlag) { return View(viewModel); }
 
-            if (PasswordHelper.VerifyPassword(viewModel.Password, user.Password))
+            if (await _passwordHelper.VerifyPassword(viewModel.Password, user.Password))
             {
                 if (!user.IsActive)
                 {

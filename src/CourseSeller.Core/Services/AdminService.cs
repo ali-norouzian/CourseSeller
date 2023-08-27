@@ -14,12 +14,15 @@ public class AdminService : IAdminService
 {
     private readonly MssqlContext _context;
     private readonly IAccountService _accountService;
+    private readonly IPasswordHelper _passwordHelper;
 
-    public AdminService(MssqlContext context, IAccountService accountService)
+    public AdminService(MssqlContext context, IAccountService accountService, IPasswordHelper passwordHelper)
     {
         _context = context;
         _accountService = accountService;
+        _passwordHelper = passwordHelper;
     }
+
 
     public async Task<UsersViewModel> GetAllUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
     {
@@ -80,7 +83,7 @@ public class AdminService : IAdminService
         var user = new User
         {
             UserId = CodeGenerators.Generate32ByteUniqueCode(),
-            Password = PasswordHelper.HashPassword(viewModel.Password),
+            Password = await _passwordHelper.HashPassword(viewModel.Password),
             ActiveCode = CodeGenerators.Generate64ByteUniqueCode(),
             ActiveCodeGenerateDateTime = DateTime.Now,
             UserName = viewModel.UserName.ToLower(),
@@ -180,7 +183,7 @@ public class AdminService : IAdminService
         user.UserName = viewModel.UserName;
         user.IsActive = viewModel.IsActive;
         if (!string.IsNullOrEmpty(viewModel.Password))
-            user.Password = PasswordHelper.HashPassword(viewModel.Password);
+            user.Password = await _passwordHelper.HashPassword(viewModel.Password);
 
         if (viewModel.Avatar != null)
         {
