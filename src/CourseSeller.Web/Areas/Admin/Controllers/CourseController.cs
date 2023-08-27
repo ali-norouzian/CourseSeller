@@ -61,5 +61,26 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             return View(course);
         }
 
+        // Action for uploading descriptions images
+        [HttpPost]
+        [Route("/file-upload")]
+        public async Task<IActionResult> UploadImage(IFormFile upload, string CKEditorFuncNum, string CKEditor, string langCode)
+        {
+            if (upload.Length <= 0) return null;
+
+            var fileName = Guid.NewGuid() + Path.GetExtension(upload.FileName).ToLower();
+
+            var path = Path.Combine(
+                Directory.GetCurrentDirectory(), "wwwroot/CourseDescriptionsImages",
+                fileName);
+
+            await using (var stream = new FileStream(path, FileMode.Create))
+                await upload.CopyToAsync(stream);
+
+            var url = $"{"/CourseDescriptionsImages/"}{fileName}";
+
+
+            return Json(new { uploaded = true, url });
+        }
     }
 }
