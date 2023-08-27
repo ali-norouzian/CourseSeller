@@ -220,32 +220,32 @@ public class UserPanelService : IUserPanelService
 
     public async Task SetWalletIsPaidAndChargeTransaction(Wallet wallet, string userName, int amount)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        await using (var transaction = await _context.Database.BeginTransactionAsync())
         {
-            // Perform your database operations within the transaction
-            // For example, you can add, update, or delete entities
+            try
+            {
+                // Perform your database operations within the transaction
+                // For example, you can add, update, or delete entities
 
-            wallet.IsPaid = true;
-            _context.Wallets.Update(wallet);
-            var user = await _accountService.GetUserByUserName(userName);
-            user.WalletBalance += amount;
+                wallet.IsPaid = true;
+                _context.Wallets.Update(wallet);
+                var user = await _accountService.GetUserByUserName(userName);
+                user.WalletBalance += amount;
 
-            // Save changes to the database
-            await _context.SaveChangesAsync();
+                // Save changes to the database
+                await _context.SaveChangesAsync();
 
-            // Commit the transaction if everything succeeds
-            await transaction.CommitAsync();
-        }
-        catch (Exception)
-        {
-            // Handle exceptions or rollback the transaction if needed
-            await transaction.RollbackAsync();
-            throw; // Optional: rethrow the exception
+                // Commit the transaction if everything succeeds
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                // Handle exceptions or rollback the transaction if needed
+                await transaction.RollbackAsync();
+                throw; // Optional: rethrow the exception
+            }
         }
     }
 
     #endregion
-
-
 }

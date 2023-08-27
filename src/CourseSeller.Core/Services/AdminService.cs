@@ -99,8 +99,9 @@ public class AdminService : IAdminService
                 $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(viewModel.Avatar.FileName)}";
             imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars",
                 avatarName);
-            await using var stream = new FileStream(imagePath, FileMode.Create);
-            await viewModel.Avatar.CopyToAsync(stream);
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await viewModel.Avatar.CopyToAsync(stream);
+            
             user.UserAvatar = avatarName;
 
         }
@@ -148,8 +149,8 @@ public class AdminService : IAdminService
                 $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(avatar.FileName)}";
             imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars",
                 avatarName);
-            await using var stream = new FileStream(imagePath, FileMode.Create);
-            await avatar.CopyToAsync(stream);
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await avatar.CopyToAsync(stream);
         }
 
         return avatarName;
@@ -194,8 +195,9 @@ public class AdminService : IAdminService
             //Save New Image
             user.UserAvatar = CodeGenerators.Generate32ByteUniqueCode() + Path.GetExtension(viewModel.Avatar.FileName);
             string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatars", user.UserAvatar);
-            await using var stream = new FileStream(imagePath, FileMode.Create);
-            await viewModel.Avatar.CopyToAsync(stream);
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await viewModel.Avatar.CopyToAsync(stream);
+            
         }
 
         //user.UserAvatar = viewModel.AvatarName;
