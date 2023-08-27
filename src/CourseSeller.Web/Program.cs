@@ -7,6 +7,7 @@ using Hangfire;
 using Hangfire.SqlServer;
 using CourseSeller.Core.Convertors;
 using CourseSeller.Core.Senders;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,12 @@ services.AddHangfireServer();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// File uploading limits.
+services.Configure<FormOptions>(option =>
+{
+    option.MultipartBodyLengthLimit = 1 * 1024 * 1024 * 1024; // 1 GB
+});
 
 
 #region Authentication
@@ -71,6 +78,7 @@ services.AddDbContext<MssqlContext>(options =>
 
 services.AddTransient<IViewRenderService, RenderViewToString>();
 services.AddTransient<ISendEmail, SendEmail>();
+services.AddTransient<IImageUtils, ImageUtils>();
 services.AddTransient<IAccountService, AccountService>();
 services.AddTransient<IUserPanelService, UserPanelService>();
 services.AddTransient<IAdminService, AdminService>();

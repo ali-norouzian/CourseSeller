@@ -1,4 +1,5 @@
-﻿using CourseSeller.Core.DTOs.Course;
+﻿using CourseSeller.Core.Convertors;
+using CourseSeller.Core.DTOs.Course;
 using CourseSeller.Core.Generators;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
@@ -14,10 +15,12 @@ public class CourseService : ICourseService
     public const byte TeacherRoleId = 2;
 
     private readonly MssqlContext _context;
+    private readonly IImageUtils _imageUtils;
 
-    public CourseService(MssqlContext context)
+    public CourseService(MssqlContext context, IImageUtils imageUtils)
     {
         _context = context;
+        _imageUtils = imageUtils;
     }
 
     public async Task<List<CourseGroup>> GetAll()
@@ -117,20 +120,37 @@ public class CourseService : ICourseService
     public async Task<int> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
     {
         course.CreateDateTime = DateTime.Now;
+        course.CourseImageName = "Default.png";
 
         // We had new image to upload
-        if (imgCourseUp != null)
+        if (imgCourseUp != null && await _imageUtils.ImageIsValid(imgCourseUp))
         {
             // Save new image
             course.CourseImageName =
                 $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(imgCourseUp.FileName)}";
             var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Images",
                 course.CourseImageName);
-            await using var stream = new FileStream(imagePath, FileMode.Create);
-            await imgCourseUp.CopyToAsync(stream);
+            // This using is auto dispose!
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await imgCourseUp.CopyToAsync(stream);
+
+            // Create resized thumbnail
+            var thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Thumb", course.CourseImageName);
+            await _imageUtils.ImageResize(imagePath, thumbPath, 150, 150);
         }
 
-        // todo: demo
+        // Demo
+        if (demoUp != null)
+        {
+            // Save new image
+            course.DemoFileName =
+                $"{CodeGenerators.Generate32ByteUniqueCode()}{Path.GetExtension(demoUp.FileName)}";
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Demos",
+                course.DemoFileName);
+            // This using is auto dispose!
+            await using (var stream = new FileStream(imagePath, FileMode.Create))
+                await demoUp.CopyToAsync(stream);
+        }
 
         await _context.Courses.AddAsync(course);
         await _context.SaveChangesAsync();

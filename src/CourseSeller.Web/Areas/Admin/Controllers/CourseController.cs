@@ -50,10 +50,11 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("[area]/Courses/Create")]
+        [RequestSizeLimit(1 * 1024 * 1024 * 1024)] // 1 GB
         public async Task<IActionResult> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
         {
-            //if (!ModelState.IsValid)
-            //    return View(course);
+            if (!ModelState.IsValid)
+                return View(course);
 
             await _courseService.CreateCourse(course, imgCourseUp, demoUp);
 
