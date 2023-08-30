@@ -21,4 +21,15 @@ public interface ICourseService
     Task UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp);
 
     #endregion
+
+
+    #region Episodes
+
+    Task<List<CourseEpisode>> ListCourseEpisodes(int courseId);
+    Task<int> CreateEpisode(CourseEpisode episode, IFormFile episodeFile);
+    Task<bool> CheckExistFile(string fileName, string filePath = "wwwroot/Courses/Episodes");
+    Task<CourseEpisode> GetEpisodeById(int id);
+    Task UpdateEpisode(CourseEpisode episode, IFormFile episodeFile);
+
+    #endregion
 }

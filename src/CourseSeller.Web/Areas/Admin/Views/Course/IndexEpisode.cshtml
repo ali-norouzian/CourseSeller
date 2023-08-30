@@ -1,11 +1,11 @@
-﻿@model List<CourseSeller.Core.DTOs.Course.ShowCourseInAdminViewModel>
+﻿@model List<CourseSeller.DataLayer.Entities.Courses.CourseEpisode>
 @{
-    ViewData["Title"] = "لیست دوره ها";
+    ViewData["Title"] = "بخش های دوره";
 }
 
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">لیست دوره ها</h1>
+        <h1 class="page-header">لیست قسمت ها</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -20,16 +20,16 @@
             <div class="panel-body">
                 <div class="col-md-12" style="margin: 10px 0;">
 
-                    <a asp-action="CreateCourse" class="btn btn-outline btn-success">افزودن دوره جدید</a>
+                    <a asp-action="CreateEpisode" asp-route-id="@ViewData["CourseId"].ToString()" class="btn btn-outline btn-success">افزودن بخش جدید</a>
 
                 </div>
 
                 <table class="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" aria-describedby="dataTables-example_info">
                     <thead>
                         <tr>
-                            <th>تصویر</th>
-                            <th>عنوان دوره</th>
-                            <th>تعداد جلسه</th>
+                            <th>عنوان بخش</th>
+                            <th>زمان جلسه</th>
+                            <th>رایگان</th>
                             <th>دستورات</th>
                         </tr>
                     </thead>
@@ -38,21 +38,30 @@
                         {
                             <tr>
                                 <td>
-                                    <img src="/Courses/Thumb/@item.ImageName" class="thumbnail" />
+                                    @item.EpisodeTitle
                                 </td>
                                 <td>
-                                    @item.Title
+                                    @item.EpisodeTime
                                 </td>
                                 <td>
-                                    @item.EpisodeCount
+                                    @if (item.IsFree)
+                                    {
+                                        <span class="text-success">
+                                            <i class="glyphicon glyphicon-ok"></i>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </span>
+                                    }
                                 </td>
                                 <td>
-                                    <a asp-area="Admin" asp-controller="Course" asp-action="UpdateCourse" asp-route-Id="@item.CourseId" class="btn btn-warning btn-sm">
+                                    <a asp-area="Admin" asp-controller="Course" asp-action="UpdateEpisode" asp-route-courseId="@item.CourseId" asp-route-episodeId="@item.EpisodeId" class="btn btn-warning btn-sm">
                                         ویرایش
                                     </a>
-                                    <a asp-area="Admin" asp-controller="Course" asp-action="IndexEpisode" asp-route-Id="@item.CourseId" class="btn btn-success btn-sm">
-                                        افزودن بخش
-                                    </a>
+
                                 </td>
                             </tr>
                         }
@@ -66,3 +75,4 @@
     </div>
     <!-- /.col-lg-12 -->
 </div>
+

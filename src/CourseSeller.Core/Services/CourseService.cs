@@ -239,4 +239,63 @@ public class CourseService : ICourseService
         _context.Courses.Update(course);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<CourseEpisode>> ListCourseEpisodes(int courseId)
+    {
+        return await _context.CourseEpisodes
+            .Where(c => c.CourseId == courseId)
+            .ToListAsync();
+    }
+
+    // Todo: episodes files can be foldered by each course
+    public async Task<int> CreateEpisode(CourseEpisode episode, IFormFile episodeFile)
+    {
+        episode.EpisodeFileName = episodeFile.FileName;
+
+        // Save new image
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Episodes",
+            episode.EpisodeFileName);
+        // This using is auto dispose!
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+            await episodeFile.CopyToAsync(stream);
+
+        await _context.CourseEpisodes.AddAsync(episode);
+        await _context.SaveChangesAsync();
+
+        return episode.EpisodeId;
+    }
+
+    public async Task<bool> CheckExistFile(string fileName, string filePath = "wwwroot/Courses/Episodes")
+    {
+        filePath = Path.Combine(Directory.GetCurrentDirectory(), filePath,
+            fileName);
+
+        return File.Exists(filePath);
+    }
+
+    public async Task<CourseEpisode> GetEpisodeById(int id)
+    {
+        return await _context.CourseEpisodes.FindAsync(id);
+    }
+
+    public async Task UpdateEpisode(CourseEpisode episode, IFormFile episodeFile)
+    {
+        if (episodeFile != null)
+        {
+            var deleteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Episodes",
+                episode.EpisodeFileName);
+            File.Delete(deleteFilePath);
+
+            episode.EpisodeFileName = episodeFile.FileName;
+            // Save new image
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Episodes",
+                episode.EpisodeFileName);
+            // This using is auto dispose!
+            await using (var stream = new FileStream(filePath, FileMode.Create))
+                await episodeFile.CopyToAsync(stream);
+        }
+
+        _context.CourseEpisodes.Update(episode);
+        await _context.SaveChangesAsync();
+    }
 }

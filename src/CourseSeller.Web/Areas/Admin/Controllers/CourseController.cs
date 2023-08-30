@@ -108,12 +108,78 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(course);
 
-            // ToDo: Chceck he want to access to files that is for him. not other people images.
+            // ToDo: Check he want to access to files that is for him. not other people images.
 
             await _courseService.UpdateCourse(course, imgCourseUp, demoUp);
 
 
             return View();
+        }
+
+        [Route("[area]/Courses/{id}/Episodes")]
+        public async Task<IActionResult> IndexEpisode(int id)
+        {
+            ViewData["CourseId"] = id;
+
+            return View(await _courseService.ListCourseEpisodes(id));
+        }
+
+        [Route("[area]/Courses/{id}/Episodes/Create")]
+        public async Task<IActionResult> CreateEpisode(int id)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("[area]/Courses/{id}/Episodes/Create")]
+        public async Task<IActionResult> CreateEpisode(int id, CourseEpisode episode, IFormFile episodeFile)
+        {
+            episode.CourseId = id;
+            if (!ModelState.IsValid || episodeFile == null)
+                return View(episode);
+
+            if (await _courseService.CheckExistFile(episodeFile.FileName))
+            {
+                ViewData["IsExistFile"] = true;
+
+                return View(episode);
+            }
+
+            // ToDo: Check he want to access to files that is for him. not other people images.
+
+            await _courseService.CreateEpisode(episode, episodeFile);
+
+            return RedirectToAction(nameof(IndexEpisode), new { id = episode.CourseId });
+        }
+
+        [Route("[area]/Courses/{courseId}/Episodes/Update/{episodeId}")]
+        public async Task<IActionResult> UpdateEpisode(int episodeId)
+        {
+            return View(await _courseService.GetEpisodeById(episodeId));
+        }
+
+        [HttpPost]
+        [Route("[area]/Courses/{courseId}/Episodes/Update/{episodeId}")]
+        public async Task<IActionResult> UpdateEpisode(int episodeId, CourseEpisode episode, IFormFile? episodeFile)
+        {
+            if (!ModelState.IsValid)
+                return View(episode);
+
+            if (episodeFile != null)
+            {
+                if (await _courseService.CheckExistFile(episodeFile.FileName))
+                {
+                    ViewData["IsExistFile"] = true;
+
+                    return View(episode);
+                }
+            }
+
+            // ToDo: Check he want to access to files that is for him. not other people images.
+
+            await _courseService.UpdateEpisode(episode, episodeFile);
+
+            return RedirectToAction(nameof(IndexEpisode), new { id = episode.CourseId });
         }
     }
 }
