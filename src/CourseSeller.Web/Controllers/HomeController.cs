@@ -1,12 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CourseSeller.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CourseSeller.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ICourseService _courseService;
+
+        public HomeController(ICourseService courseService)
         {
-            return View();
+            _courseService = courseService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            return View(await _courseService.GetAllCourse());
         }
     }
 }

@@ -14,6 +14,16 @@ public class CourseService : ICourseService
 {
     public const byte TeacherRoleId = 2;
 
+
+    public const string TypeForAll = "all";
+    public const string TypeForBuy = "buy";
+    public const string TypeForFree = "free";
+
+    public const string OrderByDate = "date";
+    public const string OrderByUpdateDate = "updatedate";
+    public const string OrderByPrice = "price";
+
+
     private readonly MssqlContext _context;
     private readonly IImageUtils _imageUtils;
 
@@ -23,7 +33,7 @@ public class CourseService : ICourseService
         _imageUtils = imageUtils;
     }
 
-    public async Task<List<CourseGroup>> GetAll()
+    public async Task<List<CourseGroup>> GetAllGroups()
     {
         return await _context.CourseGroups.ToListAsync();
     }
@@ -238,6 +248,94 @@ public class CourseService : ICourseService
 
         _context.Courses.Update(course);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<ShowCourseForListViewModel>> GetAllCourse(int pageId = 1, int take = 8, string filter = null,
+        string getType = TypeForAll, string orderByType = OrderByDate,
+        int startPrice = 0, int endPrice = int.MaxValue, List<int> selectedGroups = null)
+    {
+        IQueryable<Course> result = _context.Courses;
+
+        if (!string.IsNullOrEmpty(filter))
+            result = result.Where(c => c.CourseTitle.Contains(filter));
+
+        switch (getType)
+        {
+            case TypeForAll:
+                break;
+            case TypeForBuy:
+                result = result.Where(c => c.CoursePrice != 0);
+                break;
+            case TypeForFree:
+                result = result.Where(c => c.CoursePrice == 0);
+                break;
+        }
+
+        switch (orderByType)
+        {
+            case OrderByDate:
+                result = result.OrderByDescending(c => c.CreateDateTime);
+                break;
+            case OrderByUpdateDate:
+                result = result.OrderByDescending(c => c.UpdateDateTime);
+                break;
+            case OrderByPrice:
+                result = result.OrderByDescending(c => c.CoursePrice);
+                break;
+        }
+
+        if (0 < startPrice)
+            result = result.Where(c => c.CoursePrice > startPrice);
+        if (endPrice < int.MaxValue)
+            result = result.Where(c => c.CoursePrice < endPrice);
+
+        if (selectedGroups != null && selectedGroups.Any())
+        {
+            //Todo
+        }
+
+
+        /*
+         * Performance:
+         *  If the collection is large and you want to avoid blocking the current thread,
+         *  the first code using `asAsyncEnumerable` may be more efficient.
+         * This AsAsyncEnumerable open a stream and one by one timespan can calculate.
+         */
+        int skip = (pageId - 1) * take;
+        var viewModel = result
+            .AsQueryable()
+            .Include(c => c.CourseEpisodes)
+            .Skip(skip)
+            .Take(take)
+            .AsAsyncEnumerable();
+
+        var returnResult = new List<ShowCourseForListViewModel>();
+        await foreach (var course in viewModel)
+        {
+            returnResult.Add(new ShowCourseForListViewModel()
+            {
+                CourseId = course.CourseId,
+                ImageName = course.CourseImageName,
+                Price = course.CoursePrice,
+                Title = course.CourseTitle,
+                TotalTime = new TimeSpan(course.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks))
+            });
+        }
+
+        /*
+         * .AsEnumerable()
+         * .select(c => new ShowCourseForListViewModel()
+           {
+           CourseId = c.CourseId,
+           ImageName = c.CourseImageName,
+           Price = c.CoursePrice,
+           Title = c.CourseTitle,
+           TotalTime = new TimeSpan(c.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks)),
+           }).ToList();
+         */
+
+
+        return returnResult;
     }
 
     public async Task<List<CourseEpisode>> ListCourseEpisodes(int courseId)

@@ -14,7 +14,7 @@ public class CourseGroupViewComponent : ViewComponent
 
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        var cg = await _courseService.GetAll();
+        var cg = await _courseService.GetAllGroups();
 
         return await Task.FromResult((IViewComponentResult)View("CourseGroup", cg));
     }
