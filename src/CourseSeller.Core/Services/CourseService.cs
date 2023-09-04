@@ -194,14 +194,14 @@ public class CourseService : ICourseService
             if (course.CourseImageName != "Default.png")
             {
                 var deleteImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Images",
-                    course.DemoFileName);
+                    course.CourseImageName);
                 // We can do soft delete and hold use old images in a folder for security purpose
                 // BUG: We have roleback db on error but we havent it on delete file!
                 if (File.Exists(deleteImagePath))
                     File.Delete(deleteImagePath);
 
                 var deleteThumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Courses/Thumb",
-                    course.DemoFileName);
+                    course.CourseImageName);
                 // We can do soft delete and hold use old images in a folder for security purpose
                 // BUG: We have roleback db on error but we havent it on delete file!
                 if (File.Exists(deleteThumbPath))
@@ -291,7 +291,10 @@ public class CourseService : ICourseService
 
         if (selectedGroups != null && selectedGroups.Any())
         {
-            //Todo
+            foreach (var groupId in selectedGroups)
+            {
+                result = result.Where(c => c.GroupId == groupId || c.SubGroupId == groupId);
+            }
         }
 
 

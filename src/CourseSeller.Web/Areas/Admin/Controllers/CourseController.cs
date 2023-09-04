@@ -58,14 +58,14 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         [HttpPost]
         [Route("[area]/Courses/Create")]
         [RequestSizeLimit(1 * 1024 * 1024 * 1024)] // 1 GB
-        public async Task<IActionResult> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
+        public async Task<IActionResult> CreateCourse(Course course, IFormFile? imgCourseUp, IFormFile? demoUp=null)
         {
             if (!ModelState.IsValid)
                 return View(course);
 
             await _courseService.CreateCourse(course, imgCourseUp, demoUp);
 
-            return View(course);
+            return RedirectToAction(nameof(Index));
         }
 
         // Action for uploading descriptions images
@@ -103,17 +103,17 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("[area]/Courses/Update/{id}")]
-        public async Task<IActionResult> UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
+        public async Task<IActionResult> UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile? demoUp=null)
         {
             if (!ModelState.IsValid)
                 return View(course);
 
             // ToDo: Check he want to access to files that is for him. not other people images.
-
+            // ToDo: bug fixing.
             await _courseService.UpdateCourse(course, imgCourseUp, demoUp);
 
 
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
         [Route("[area]/Courses/{id}/Episodes")]
