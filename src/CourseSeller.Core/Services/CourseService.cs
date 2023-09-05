@@ -250,7 +250,8 @@ public class CourseService : ICourseService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<ShowCourseForListViewModel>> GetAllCourse(int pageId = 1, int take = 8, string filter = null,
+    // list of courses, pageCount, maxPrice, minPrice
+    public async Task<Tuple<List<ShowCourseForListViewModel>, int, int, int>> GetAllCourse(int pageId = 1, int take = 8, string filter = null,
         string getType = TypeForAll, string orderByType = OrderByDate,
         int startPrice = 0, int endPrice = int.MaxValue, List<int> selectedGroups = null)
     {
@@ -338,8 +339,29 @@ public class CourseService : ICourseService
          */
 
 
-        return returnResult;
+        // 8 take is for home page and in home we don't need this query
+        int pageCount = 0;
+        if (take != 8)
+            pageCount = await GetCountOfFilteredCourse(result, take);
+
+        // For havent extra query in first home page
+        int maxPrice = 0, minPrice = 0;
+        if (!(0 < startPrice && endPrice < int.MaxValue))
+        {
+            maxPrice = await result.MaxAsync(c => c.CoursePrice);
+            minPrice = await result.MinAsync(c => c.CoursePrice);
+        }
+
+        return Tuple.Create(returnResult, pageCount, maxPrice, minPrice);
     }
+
+    public async Task<int> GetCountOfFilteredCourse(IQueryable<Course> q, int takeEachPage)
+    {
+        return await q
+            .Include(c => c.CourseEpisodes)
+            .CountAsync() / takeEachPage;
+    }
+
 
     public async Task<List<CourseEpisode>> ListCourseEpisodes(int courseId)
     {

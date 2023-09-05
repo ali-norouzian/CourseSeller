@@ -26,9 +26,10 @@ public interface ICourseService
     Task<List<ShowCourseInAdminViewModel>> GetAllCoursesForAdmin();
     Task<Course> GetCourseById(int id);
     Task UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp);
-    Task<List<ShowCourseForListViewModel>> GetAllCourse(int pageId = 1, int take = 8, string filter = null,
+    Task<Tuple<List<ShowCourseForListViewModel>, int, int, int>> GetAllCourse(int pageId = 1, int take = 8, string filter = null,
         string getType = TypeForAll, string orderByType = OrderByDate,
         int startPrice = 0, int endPrice = int.MaxValue, List<int> selectedGroups = null);
+    Task<int> GetCountOfFilteredCourse(IQueryable<Course> q, int takeEachPage);
 
     #endregion
 

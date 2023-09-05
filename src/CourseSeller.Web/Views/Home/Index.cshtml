@@ -1,4 +1,4 @@
-﻿@model List<CourseSeller.Core.DTOs.Course.ShowCourseForListViewModel>
+﻿@model Tuple<List<CourseSeller.Core.DTOs.Course.ShowCourseForListViewModel>,int,int,int>
 @{
     ViewData["Title"] = "خانه";
 }
@@ -20,7 +20,7 @@
             <div class="row">
                 <!-- col -->
                 
-                @foreach (var item in Model)
+                @foreach (var item in Model.Item1)
                 {
                     <partial name="_CourseBox" model="@item"/>
                 }
