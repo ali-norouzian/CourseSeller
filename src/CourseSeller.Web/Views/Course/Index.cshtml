@@ -181,13 +181,13 @@
 
             var slider = document.getElementById('priceFilter');
             noUiSlider.create(slider, {
-                start: [@Model.Item4, @Model.Item3],
+                start: [0, 100000000],
                 step: 5000,
                 connect: true,
                 direction: 'rtl',
                 range: {
-                    'min': @Model.Item4,
-                    'max': @Model.Item3
+                    'min': 0,
+                    'max': 100000000
                 }
             });
 

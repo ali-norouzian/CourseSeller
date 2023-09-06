@@ -258,7 +258,7 @@ public class CourseService : ICourseService
         IQueryable<Course> result = _context.Courses;
 
         if (!string.IsNullOrEmpty(filter))
-            result = result.Where(c => c.CourseTitle.Contains(filter));
+            result = result.Where(c => c.CourseTitle.Contains(filter)||c.Tags.Contains(filter));
 
         switch (getType)
         {
@@ -348,8 +348,15 @@ public class CourseService : ICourseService
         int maxPrice = 0, minPrice = 0;
         if (!(0 < startPrice && endPrice < int.MaxValue))
         {
-            maxPrice = await result.MaxAsync(c => c.CoursePrice);
-            minPrice = await result.MinAsync(c => c.CoursePrice);
+            try
+            {
+                maxPrice = await result.MaxAsync(c => c.CoursePrice);
+                minPrice = await result.MinAsync(c => c.CoursePrice);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         return Tuple.Create(returnResult, pageCount, maxPrice, minPrice);
@@ -360,6 +367,16 @@ public class CourseService : ICourseService
         return await q
             .Include(c => c.CourseEpisodes)
             .CountAsync() / takeEachPage;
+    }
+
+    public async Task<Course> GetCourseByForShowSingle(int courseId)
+    {
+        return await _context.Courses
+            .Include(c => c.CourseEpisodes)
+            .Include(c => c.CourseStatus)
+            .Include(c => c.CourseLevel)
+            .Include(c => c.User)
+            .FirstOrDefaultAsync(c => c.CourseId == courseId);
     }
 
 

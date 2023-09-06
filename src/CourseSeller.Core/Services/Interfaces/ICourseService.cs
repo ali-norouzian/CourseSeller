@@ -30,6 +30,7 @@ public interface ICourseService
         string getType = TypeForAll, string orderByType = OrderByDate,
         int startPrice = 0, int endPrice = int.MaxValue, List<int> selectedGroups = null);
     Task<int> GetCountOfFilteredCourse(IQueryable<Course> q, int takeEachPage);
+    Task<Course> GetCourseByForShowSingle(int courseId);
 
     #endregion
 

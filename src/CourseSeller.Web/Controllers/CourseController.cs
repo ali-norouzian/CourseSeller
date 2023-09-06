@@ -25,5 +25,15 @@ namespace CourseSeller.Web.Controllers
 
             return View(await _courseService.GetAllCourse(pageId, take, filter, getType, orderByType, startPrice, endPrice, selectedGroups));
         }
+
+        [Route("[controller]/{courseId}")]
+        public async Task<IActionResult> ShowCourse(int courseId)
+        {
+            var course = await _courseService.GetCourseByForShowSingle(courseId);
+            if (course == null)
+                return NotFound();
+
+            return View(course);
+        }
     }
 }
