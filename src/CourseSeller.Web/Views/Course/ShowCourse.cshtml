@@ -2,7 +2,7 @@
 @model CourseSeller.DataLayer.Entities.Courses.Course
 @{
     ViewData["Title"] = Model.CourseTitle;
-    
+
 }
 
 @* @section MetaTag
@@ -57,28 +57,28 @@
 
                     @* @if (!IsUserInCourse)
                     {
-                        <div class="alert alert-info">
-                            <p>بعد از ثبت نام در این دوره و تایید فاکتور لینک های دانلود برای شما فعال خواهد شد</p>
-                        </div>
+                    <div class="alert alert-info">
+                    <p>بعد از ثبت نام در این دوره و تایید فاکتور لینک های دانلود برای شما فعال خواهد شد</p>
+                    </div>
                     } *@
 
                     <h2> سرفصل های این دوره : </h2>
                     @* @if (ViewBag.Episode != null)
                     {
-                        CourseEpisode episode = ViewBag.Episode as CourseEpisode;
+                    CourseEpisode episode = ViewBag.Episode as CourseEpisode;
 
 
 
-                        <h2>@episode.EpisodeTitle</h2>
-                        <video controls style="width: 100%">
-                            <source src="@ViewBag.filePath" />
-                        </video>
+                    <h2>@episode.EpisodeTitle</h2>
+                    <video controls style="width: 100%">
+                    <source src="@ViewBag.filePath" />
+                    </video>
                     } *@
                     <ul>
                         @foreach (var item in Model.CourseEpisodes)
                         {
                             <li>
-                                @if (item.IsFree )
+                                @if (item.IsFree)
                                 {
 
                                     <h3>
@@ -104,7 +104,7 @@
                                 }
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    if (item.IsFree )
+                                    if (item.IsFree)
                                     {
                                         <a href="/ShowCourse/@Model.CourseId?episode=@item.EpisodeId">تماشا</a>
                                     }
@@ -176,9 +176,13 @@
                         </li>
                     </ul>
 
-                    @if (Model.CoursePrice != 0 )
+                    @if (Model.CoursePrice != 0)
                     {
-                        <a href="/Course/BuyCourse/@Model.CourseId"> شرکت در دوره : @Model.CoursePrice.ToString("#,0") تومان </a>
+                        <a asp-controller="Course" asp-action="BuyCourse" asp-route-courseId="@Model.CourseId">
+
+                            شرکت در دوره : @Model.CoursePrice.ToString("#,0") تومان
+
+                        </a>
                     }
                 </div>
 

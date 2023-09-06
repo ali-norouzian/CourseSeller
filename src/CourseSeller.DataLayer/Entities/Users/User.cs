@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using CourseSeller.DataLayer.Entities.Courses;
+using CourseSeller.DataLayer.Entities.Orders;
 using CourseSeller.DataLayer.Entities.Wallets;
 
 
@@ -58,6 +59,7 @@ namespace CourseSeller.DataLayer.Entities.Users
         public List<UserRole> UserRoles { get; set; }
         public List<Wallet> Wallets { get; set; }
         public List<Course> Courses { get; set; }
+        public List<Order> Orders { get; set; }
 
         #endregion
     }

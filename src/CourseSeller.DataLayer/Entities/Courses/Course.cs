@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CourseSeller.DataLayer.Entities.Orders;
 using CourseSeller.DataLayer.Entities.Users;
 
 namespace CourseSeller.DataLayer.Entities.Courses;
@@ -74,6 +75,9 @@ public class Course
     public CourseLevel CourseLevel { get; set; }
 
     public List<CourseEpisode> CourseEpisodes { get; set; }
+
+
+    public List<OrderDetail> OrderDetails { get; set; }
 
     #endregion
 }

@@ -1,4 +1,6 @@
-﻿using CourseSeller.Core.Services.Interfaces;
+﻿using System.Security.Claims;
+using CourseSeller.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static CourseSeller.Core.Services.CourseService;
 
@@ -7,10 +9,12 @@ namespace CourseSeller.Web.Controllers
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;
+        private readonly IOrderService _orderService;
 
-        public CourseController(ICourseService courseService)
+        public CourseController(ICourseService courseService, IOrderService orderService)
         {
             _courseService = courseService;
+            _orderService = orderService;
         }
 
         public async Task<IActionResult> Index(int pageId = 1, int take = 9, string filter = null,
@@ -34,6 +38,15 @@ namespace CourseSeller.Web.Controllers
                 return NotFound();
 
             return View(course);
+        }
+
+        [Authorize]
+        [Route("[controller]/{courseId}/BuyCourse")]
+        public async Task<IActionResult> BuyCourse(int courseId)
+        {
+            var course = await _orderService.CreateOrder(User.Identity.Name, courseId);
+
+            return RedirectToAction(nameof(ShowCourse),new{ courseId = courseId });
         }
     }
 }

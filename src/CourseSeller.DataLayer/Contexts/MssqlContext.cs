@@ -1,4 +1,5 @@
 ﻿using CourseSeller.DataLayer.Entities.Courses;
+using CourseSeller.DataLayer.Entities.Orders;
 using CourseSeller.DataLayer.Entities.Permissions;
 using CourseSeller.DataLayer.Entities.Users;
 using CourseSeller.DataLayer.Entities.Wallets;
@@ -59,6 +60,14 @@ namespace CourseSeller.DataLayer.Contexts
         public DbSet<CourseStatus> CourseStatus { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseEpisode> CourseEpisodes { get; set; }
+
+        #endregion
+
+
+        #region Orders
+
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         #endregion
     }
