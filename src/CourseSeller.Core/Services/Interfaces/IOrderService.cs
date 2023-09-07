@@ -8,5 +8,6 @@ public interface IOrderService
     Task<int> CreateOrder(string userName, int courseId);
     Task<Order> GetUserOrder(string userName, int orderId);
     Task<bool> FinishOrder(string userName, int orderId);
+    Task<List<Order>> GetUserOrders(string userName);
 
 }

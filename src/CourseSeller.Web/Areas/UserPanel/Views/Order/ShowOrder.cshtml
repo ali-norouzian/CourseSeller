@@ -2,7 +2,7 @@
 @model CourseSeller.DataLayer.Entities.Orders.Order
 @inject IUserPanelService _UserPanelService
 @{
-    ViewData["Title"] = "ShowOrder";
+    ViewData["Title"] = "نمایش فاکتور";
     int sumOrder = Model.OrderSum;
     var userBalance = await _UserPanelService.GetUserBalance(User.Identity.Name);
     // string discountType = ViewBag.typeDiscount.ToString();

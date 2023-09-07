@@ -169,4 +169,13 @@ public class OrderService : IOrderService
 
         return false;
     }
+
+    public async Task<List<Order>> GetUserOrders(string userName)
+    {
+        var userId = await GetUserIdByUserName(userName);
+
+        return await _context.Orders
+            .Where(u => u.UserId == userId)
+            .ToListAsync();
+    }
 }

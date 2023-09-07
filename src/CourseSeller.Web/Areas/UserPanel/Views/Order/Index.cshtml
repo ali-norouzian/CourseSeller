@@ -1,7 +1,7 @@
 ﻿@using CourseSeller.Core.Convertors
 @model IEnumerable<CourseSeller.DataLayer.Entities.Orders.Order>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "نمایش فاکتور ها";
 }
 
 <div class="container">
@@ -17,52 +17,52 @@
     <div class="container">
         <div class="user-account">
             <div class="row">
-                <partial name="_SideBar" />
+                <partial name="_SideBar" model="null"/>
                 <div class="col-md-9 col-sm-8 col-xs-12">
                     <section class="user-account-content">
                         <header><h1> فاکتورهای شما </h1></header>
                         <table class="table table-bordered">
                             <thead>
-                                <tr>
-                                    <th>شماره فاکتور</th>
-                                    <th>تاریخ</th>
-                                    <th>جمع</th>
-                                    <th>پرداخت</th>
-                                    <th>دستورات</th>
-                                </tr>
+                            <tr>
+                                <th>شماره فاکتور</th>
+                                <th>تاریخ</th>
+                                <th>جمع</th>
+                                <th>پرداخت</th>
+                                <th>دستورات</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            @item.OrderId
-                                        </td>
-                                        <td>
-                                            @item.CreateDateTime.ToShamsi()
-                                        </td>
-                                        <td>@item.OrderSum</td>
-                                        <td>
-                                            @if (item.IsFinished)
-                                            {
-                                                <p class="text-success">
-                                                    @*<i class="glyphicon glyphicon-ok"></i>*@
-                                                    پرداخت شده
-                                                </p>
-                                            }
-                                            else
-                                            {
-                                                <p class="text-danger">
-                                                    @*<i class="glyphicon glyphicon-remove"></i>*@
-                                                    پرداخت نشده
-                                                </p>
-                                            }
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-info" href="/UserPanel/MyOrders/ShowOrder/@item.OrderId">نمایش</a>
-                                        </td>
-                                    </tr>
-                                }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.OrderId
+                                    </td>
+                                    <td>
+                                        @item.CreateDateTime.ToShamsi()
+                                    </td>
+                                    <td>@item.OrderSum</td>
+                                    <td>
+                                        @if (item.IsFinished)
+                                        {
+                                            <p class="text-success">
+                                                @* <i class="glyphicon glyphicon-ok"></i> *@
+                                                پرداخت شده
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-danger">
+                                                @* <i class="glyphicon glyphicon-remove"></i> *@
+                                                پرداخت نشده
+                                            </p>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="ShowOrder" asp-route-orderId="@item.OrderId" class="btn btn-info">نمایش</a>
+                                    </td>
+                                </tr>
+                            }
                             </tbody>
                         </table>
                     </section>

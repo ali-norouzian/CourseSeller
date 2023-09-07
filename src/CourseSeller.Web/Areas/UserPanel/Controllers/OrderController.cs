@@ -15,9 +15,9 @@ namespace CourseSeller.Web.Areas.UserPanel.Controllers
             _orderService = orderService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return View(await _orderService.GetUserOrders(User.Identity.Name));
         }
 
         [Route("/[area]/[controller]/{orderId}")]
