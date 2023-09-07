@@ -9,7 +9,7 @@
                 @foreach (var cg in Model.Where(cg => cg.ParentId == null))
                 {
                     <li>
-                        <a asp-controller="Course" asp-action="Index" asp-route-selectedGroups="@cg.GroupId"> @cg.GroupTitle </a>
+                        <a asp-area="" asp-controller="Course" asp-action="Index" asp-route-selectedGroups="@cg.GroupId"> @cg.GroupTitle </a>
 
                         @if (Model.Any(c => c.ParentId == cg.GroupId))
                         {
@@ -18,7 +18,7 @@
                                 @foreach (var subCg in Model.Where(c => c.ParentId == cg.GroupId))
                                 {
                                     <li>
-                                        <a asp-controller="Course" asp-action="Index" asp-route-selectedGroups="@subCg.GroupId"> @subCg.GroupTitle </a>
+                                        <a asp-area="" asp-controller="Course" asp-action="Index" asp-route-selectedGroups="@subCg.GroupId"> @subCg.GroupTitle </a>
                                     </li>
                                 }
 

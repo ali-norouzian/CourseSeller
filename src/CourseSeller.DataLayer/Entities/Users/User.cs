@@ -60,6 +60,7 @@ namespace CourseSeller.DataLayer.Entities.Users
         public List<Wallet> Wallets { get; set; }
         public List<Course> Courses { get; set; }
         public List<Order> Orders { get; set; }
+        public List<UserCourse> UserCourses { get; set; }
 
         #endregion
     }

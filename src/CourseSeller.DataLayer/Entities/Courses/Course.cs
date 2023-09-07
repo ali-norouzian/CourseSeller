@@ -79,5 +79,8 @@ public class Course
 
     public List<OrderDetail> OrderDetails { get; set; }
 
+
+    public List<UserCourse> UserCourses { get; set; }
+
     #endregion
 }

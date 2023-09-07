@@ -1,5 +1,4 @@
-﻿using CourseSeller.Core.Convertors;
-using CourseSeller.Core.DTOs.UserPanel;
+﻿using CourseSeller.Core.DTOs.UserPanel;
 using CourseSeller.Core.DTOs.UserPanel.Wallet;
 using CourseSeller.Core.Generators;
 using CourseSeller.Core.Security;
@@ -201,6 +200,14 @@ public class UserPanelService : IUserPanelService
         return wallet.WalletId;
     }
 
+    public async Task<int> AddWallet(Wallet wallet)
+    {
+        await _context.Wallets.AddAsync(wallet);
+        await _context.SaveChangesAsync();
+
+        return wallet.WalletId;
+    }
+
     public async Task<Wallet> GetWalletById(int walletId)
     {
         return await _context.Wallets.FindAsync(walletId);
@@ -247,6 +254,11 @@ public class UserPanelService : IUserPanelService
                 throw; // Optional: rethrow the exception
             }
         }
+    }
+
+    public async Task<int> GetUserBalance(string userName)
+    {
+        return (await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName)).WalletBalance;
     }
 
     #endregion

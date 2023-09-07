@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using CourseSeller.Core.Services.Interfaces;
+﻿using CourseSeller.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using CourseSeller.Web.Areas.UserPanel.Controllers;
 using static CourseSeller.Core.Services.CourseService;
 
 namespace CourseSeller.Web.Controllers
@@ -44,9 +44,9 @@ namespace CourseSeller.Web.Controllers
         [Route("[controller]/{courseId}/BuyCourse")]
         public async Task<IActionResult> BuyCourse(int courseId)
         {
-            var course = await _orderService.CreateOrder(User.Identity.Name, courseId);
+            var orderId = await _orderService.CreateOrder(User.Identity.Name, courseId);
 
-            return RedirectToAction(nameof(ShowCourse),new{ courseId = courseId });
+            return RedirectToAction("ShowOrder", "Order", new { area = "UserPanel", orderId = orderId });
         }
     }
 }
