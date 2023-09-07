@@ -25,4 +25,8 @@
 		<ProjectReference Include="..\CourseSeller.DataLayer\CourseSeller.DataLayer.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="DTOs\Order\" />
+	</ItemGroup>
+
 </Project>

@@ -1,12 +1,11 @@
 ﻿@using CourseSeller.Core.Services.Interfaces
+@using CourseSeller.Core.DTOs.Order
 @model CourseSeller.DataLayer.Entities.Orders.Order
 @inject IUserPanelService _UserPanelService
 @{
     ViewData["Title"] = "نمایش فاکتور";
     int sumOrder = Model.OrderSum;
-    var userBalance = await _UserPanelService.GetUserBalance(User.Identity.Name);
-    // string discountType = ViewBag.typeDiscount.ToString();
-}
+    var userBalance = await _UserPanelService.GetUserBalance(User.Identity.Name);}
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -62,44 +61,56 @@
                                     <tr>
                                         <td colspan="3" class="text-left">کد تخفیف</td>
                                         <td>
-                                            <form action="/UserPanel/MyOrders/UseDiscount" method="post">
-                                                <input type="hidden" name="orderid" value="@Model.OrderId" />
-                                                <input type="text" name="code" class="form-control" />
+                                            <form asp-action="UseDiscount" asp-route-orderId="@Model.OrderId" method="post">
+                                                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                                                <input type="text" name="discountCode" class="form-control" />
                                                 <input type="submit" class="btn btn-primary btn-block" style="margin-top: 5px" value="اعمال" />
                                             </form>
-                                            @* @if (discountType != "")
+                                            @{
+                                                #nullable enable
+                                                var discountType = TempData["errType"];
+
+                                            }
+                                            @if (discountType != null)
                                             {
                                                 switch (discountType)
                                                 {
-                                                    case "Success":
+                                                    case (int)DiscountErrorType.Success:
                                                         {
                                                             <div class="alert alert-success">
                                                                 <p class="text-muted">کد با موفقیت اعمال شد</p>
                                                             </div>
                                                             break;
                                                         }
-                                                    case "ExpierDate":
+                                                    case (int)DiscountErrorType.NotStarted:
+                                                    {
+                                                        <div class="alert alert-danger">
+                                                            <p class="text-muted">تاریخ شروع کد تخفیف هنور فرا نرسیده است</p>
+                                                        </div>
+                                                        break;
+                                                    }
+                                                    case (int)DiscountErrorType.FinishedTime:
                                                         {
                                                             <div class="alert alert-danger">
                                                                 <p class="text-muted">تاریخ کد به اتمام رسیده است</p>
                                                             </div>
                                                             break;
                                                         }
-                                                    case "NotFound":
+                                                    case (int)DiscountErrorType.NotFound:
                                                         {
                                                             <div class="alert alert-warning">
                                                                 <p class="text-muted">کد معتبر نیست</p>
                                                             </div>
                                                             break;
                                                         }
-                                                    case "Finished":
+                                                    case (int)DiscountErrorType.Finished:
                                                         {
                                                             <div class="alert alert-danger">
                                                                 <p class="text-muted">کد به اتمام رسیده است</p>
                                                             </div>
                                                             break;
                                                         }
-                                                    case "UserUsed":
+                                                    case (int)DiscountErrorType.UserUsed:
                                                         {
                                                             <div class="alert alert-info">
                                                                 <p class="text-muted">این کد قبلا توسط شما استفاده شده است</p>
@@ -107,14 +118,29 @@
                                                             break;
                                                         }
                                                 }
-                                            } *@
+                                            }
                                         </td>
                                     </tr> 
                                 }
                                 <tr>
                                     <td colspan="3" class="text-left">جمع کل</td>
                                     <td>
-                                        @sumOrder.ToString("#,0")
+                                        @{
+                                            var beforeDiscountPrice = 0;
+                                            foreach (var od in Model.OrderDetails)
+                                            {
+                                                beforeDiscountPrice += od.CurrentPrice * od.Count;
+                                            }
+                                        }
+                                        <style>
+                                            .line-through {
+                                                text-decoration: line-through;
+                                            }
+                                        </style>
+                                        <span class="text-success">@sumOrder.ToString(" #,0")</span>  @if (beforeDiscountPrice != sumOrder)
+                                        {
+                                            <span class="text-danger line-through">@beforeDiscountPrice.ToString(" #,0")</span>
+                                        }
                                     </td>
                                 </tr>
                                 @if (!Model.IsFinished)

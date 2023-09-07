@@ -1,7 +1,9 @@
-﻿using CourseSeller.Core.Services.Interfaces;
+﻿using CourseSeller.Core.DTOs.Order;
+using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Courses;
 using CourseSeller.DataLayer.Entities.Orders;
+using CourseSeller.DataLayer.Entities.Users;
 using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
 using static CourseSeller.Core.Services.UserPanelService;
@@ -23,7 +25,8 @@ public class OrderService : IOrderService
 
     public async Task<string> GetUserIdByUserName(string userName)
     {
-        return (await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName)).UserId; ;
+        return (await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName)).UserId;
+        ;
     }
 
     public async Task<int> CreateOrder(string userName, int courseId)
@@ -87,6 +90,11 @@ public class OrderService : IOrderService
         return order.OrderId;
     }
 
+    public async Task<Order> GetOrderById(int id)
+    {
+        return await _context.Orders.FindAsync(id);
+    }
+
     public async Task<Order> GetUserOrder(string userName, int orderId)
     {
         var userId = await GetUserIdByUserName(userName);
@@ -95,6 +103,12 @@ public class OrderService : IOrderService
             .Include(o => o.OrderDetails)
             .ThenInclude(od => od.Course)
             .FirstOrDefaultAsync(o => o.UserId == userId && o.OrderId == orderId);
+    }
+
+    public async Task UpdateOrder(Order order)
+    {
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<bool> FinishOrder(string userName, int orderId)
@@ -141,6 +155,7 @@ public class OrderService : IOrderService
                             UserId = userId,
                         });
                     }
+
                     await _context.UserCourses.AddRangeAsync(userCourse);
 
                     _context.Orders.Update(order);
@@ -177,5 +192,56 @@ public class OrderService : IOrderService
         return await _context.Orders
             .Where(u => u.UserId == userId)
             .ToListAsync();
+    }
+
+    public async Task<DiscountErrorType> UserDiscount(int orderId, string code)
+    {
+        // Single mean that we have not duplicated column of code
+        var discount = await _context.Discounts.SingleOrDefaultAsync(d => d.Code == code);
+        if (discount == null)
+            return DiscountErrorType.NotFound;
+
+        if (discount.StartDateTime != null && discount.StartDateTime >= DateTime.Now)
+            return DiscountErrorType.NotStarted;
+        if (discount.EndDateTime != null && discount.EndDateTime <= DateTime.Now)
+            return DiscountErrorType.FinishedTime;
+
+        if (discount.UsableCount != null && discount.UsableCount < 1)
+            return DiscountErrorType.Finished;
+
+        var order = await GetOrderById(orderId);
+        if (order.UsedDiscount)
+            return DiscountErrorType.UserUsed;
+
+
+        await using (var transaction = await _context.Database.BeginTransactionAsync())
+        {
+            try
+            {
+                order.OrderSum = (order.OrderSum * (100 - discount.Percentage)) / 100;
+                _context.Orders.Update(order);
+
+                if (discount.UsableCount != null)
+                {
+                    discount.UsableCount--;
+                    _context.Discounts.Update(discount);
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Commit the transaction if everything succeeds
+                await transaction.CommitAsync();
+
+            }
+            catch (Exception)
+            {
+                // Handle exceptions or rollback the transaction if needed
+                await transaction.RollbackAsync();
+                throw; // Optional: rethrow the exception
+            }
+
+
+            return DiscountErrorType.Success;
+        }
     }
 }

@@ -41,5 +41,18 @@ namespace CourseSeller.Web.Areas.UserPanel.Controllers
             TempData["isFinish"] = true;
             return RedirectToAction(nameof(ShowOrder), new { orderId = orderId });
         }
+
+        [HttpPost]
+        [Route("/[area]/[controller]/{orderId}/UseDiscount")]
+        public async Task<IActionResult> UseDiscount(int orderId, string discountCode)
+        {
+            var errType = await _orderService.UserDiscount(orderId, discountCode);
+
+
+            TempData["errType"] = errType;
+
+
+            return RedirectToAction(nameof(ShowOrder), new { orderId = orderId });
+        }
     }
 }

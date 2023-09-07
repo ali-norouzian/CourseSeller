@@ -19,6 +19,9 @@ namespace CourseSeller.DataLayer.Entities.Orders
         [Required]
         public DateTime CreateDateTime { get; set; }
 
+        // This is for prevent use a discount twoice!
+        public bool UsedDiscount { get; set; }
+
 
         public User User { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
