@@ -21,6 +21,8 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         [Route("[area]/Courses")]
         public async Task<IActionResult> Index()
         {
+            // If you want access to for example count of students of each
+            //  course here you most use group by to.
             return View(await _courseService.GetAllCoursesForAdmin());
         }
 
@@ -58,7 +60,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         [HttpPost]
         [Route("[area]/Courses/Create")]
         [RequestSizeLimit(1 * 1024 * 1024 * 1024)] // 1 GB
-        public async Task<IActionResult> CreateCourse(Course course, IFormFile? imgCourseUp, IFormFile? demoUp=null)
+        public async Task<IActionResult> CreateCourse(Course course, IFormFile? imgCourseUp, IFormFile? demoUp = null)
         {
             if (!ModelState.IsValid)
                 return View(course);
@@ -103,7 +105,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("[area]/Courses/Update/{id}")]
-        public async Task<IActionResult> UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile? demoUp=null)
+        public async Task<IActionResult> UpdateCourse(Course course, IFormFile imgCourseUp, IFormFile? demoUp = null)
         {
             if (!ModelState.IsValid)
                 return View(course);

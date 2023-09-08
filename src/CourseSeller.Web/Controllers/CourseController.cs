@@ -48,5 +48,28 @@ namespace CourseSeller.Web.Controllers
 
             return RedirectToAction("ShowOrder", "Order", new { area = "UserPanel", orderId = orderId });
         }
+
+        [Authorize]
+        [Route("[controller]/{courseId}/Download/{episodeId}")]
+        public async Task<IActionResult> DownloadCourse(int courseId, int episodeId)
+        {
+            var episode = await _courseService.GetEpisodeById(episodeId);
+            var fileName = episode.EpisodeFileName;
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(),
+                "wwwroot/Courses/Episodes",
+                fileName
+            );
+            if (episode.IsFree ||
+                await _orderService.UserHasCourse(User.Identity.Name, episode.CourseId)
+                )
+            {
+                // Download
+                byte[] file = await System.IO.File.ReadAllBytesAsync(filePath);
+
+                return File(file, "application/force-download", fileName);
+            }
+
+            return Forbid();
+        }
     }
 }

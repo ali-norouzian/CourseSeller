@@ -2,6 +2,7 @@
 @using CourseSeller.Core.Services.Interfaces
 @model CourseSeller.DataLayer.Entities.Courses.Course
 @inject IOrderService _OrderService
+@inject ICourseService _CourseService
 @{
     ViewData["Title"] = Model.CourseTitle;
 
@@ -51,11 +52,16 @@
                     <img src="/Courses/Images/@Model.CourseImageName">
 
                     @Html.Raw(Model.CourseDescription)
+                    
+                    @if (!userHasCourse)
+                    {
+                        <p class="alert alert-info">بعد از ثبت نام در این دوره و تایید فاکتور لینک های دوره برای شما فعال خواهد شد.</p>
+                    }
 
                     @if (!string.IsNullOrEmpty(Model.DemoFileName))
                     {
                         <video style="width: 100%" controls poster="/Courses/Images/@Model.CourseImageName">
-                            <source src="/Courses/Demos@Model.DemoFileName" />
+                            <source src="/Courses/Demos/@Model.DemoFileName" />
                         </video>
                     }
 
@@ -85,11 +91,11 @@
                         @foreach (var item in Model.CourseEpisodes)
                         {
                             <li>
-                                @if (item.IsFree)
+                                @if (item.IsFree||userHasCourse)
                                 {
 
                                     <h3>
-                                        <a href="/DownloadFile/@item.EpisodeId">
+                                        <a asp-action="DownloadCourse" asp-route-courseId="@Model.CourseId" asp-route-episodeId="@item.EpisodeId">
                                             @item.EpisodeTitle
                                         </a>
 
@@ -113,7 +119,7 @@
                                 {
                                     if (item.IsFree)
                                     {
-                                        <a href="/ShowCourse/@Model.CourseId?episode=@item.EpisodeId">تماشا</a>
+                                        <a asp-action="ShowCourse" asp-route-courseId="@Model.CourseId" asp-route-episodeId="@item.EpisodeId">تماشا</a>
                                     }
 
                                 }
@@ -179,11 +185,11 @@
                         </li>
                         <li>
                             <span> تعداد دانشجوها </span>
-                            <i> 999 نفر </i>
+                            <i> @await _CourseService.GetStudentsCountOfCourse(Model.CourseId) نفر </i>
                         </li>
                     </ul>
 
-                    @if (Model.CoursePrice != 0)
+                    @if (Model.CoursePrice != 0 && !userHasCourse)
                     {
                         <a asp-controller="Course" asp-action="BuyCourse" asp-route-courseId="@Model.CourseId">
 
@@ -203,7 +209,7 @@
                     <ul>
                         <li>سطح دوره: @Model.CourseStatus.StatusTitle</li>
                         <li>وضعیت دوره: @Model.CourseLevel.LevelTitle</li>
-                        @if (Model.CoursePrice != 0 && !userHasCourse)
+                        @if (Model.CoursePrice != 0 )
                         {
                             <li>قیمت : @Model.CoursePrice.ToString("#,0") تومان</li>
                         }

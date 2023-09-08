@@ -31,6 +31,7 @@ public interface ICourseService
         int startPrice = 0, int endPrice = int.MaxValue, List<int> selectedGroups = null);
     Task<int> GetCountOfFilteredCourse(IQueryable<Course> q, int takeEachPage);
     Task<Course> GetCourseByForShowSingle(int courseId);
+    Task<int> GetStudentsCountOfCourse(int courseId);
 
     #endregion
 

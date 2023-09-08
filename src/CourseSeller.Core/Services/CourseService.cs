@@ -170,6 +170,8 @@ public class CourseService : ICourseService
 
     public async Task<List<ShowCourseInAdminViewModel>> GetAllCoursesForAdmin()
     {
+        // If you want access to for example count of students of each
+        //  course here you most use group by to.
         return await _context.Courses.Select(c => new ShowCourseInAdminViewModel()
         {
             CourseId = c.CourseId,
@@ -258,7 +260,7 @@ public class CourseService : ICourseService
         IQueryable<Course> result = _context.Courses;
 
         if (!string.IsNullOrEmpty(filter))
-            result = result.Where(c => c.CourseTitle.Contains(filter)||c.Tags.Contains(filter));
+            result = result.Where(c => c.CourseTitle.Contains(filter) || c.Tags.Contains(filter));
 
         switch (getType)
         {
@@ -377,6 +379,11 @@ public class CourseService : ICourseService
             .Include(c => c.CourseLevel)
             .Include(c => c.User)
             .FirstOrDefaultAsync(c => c.CourseId == courseId);
+    }
+
+    public async Task<int> GetStudentsCountOfCourse(int courseId)
+    {
+        return await _context.UserCourses.CountAsync(c => c.CourseId == courseId);
     }
 
 
