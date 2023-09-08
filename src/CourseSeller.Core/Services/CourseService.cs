@@ -177,7 +177,8 @@ public class CourseService : ICourseService
             CourseId = c.CourseId,
             ImageName = c.CourseImageName,
             Title = c.CourseTitle,
-            EpisodeCount = c.CourseEpisodes.Count
+            EpisodeCount = c.CourseEpisodes.Count,
+            StudentCount = c.UserCourses.Count
         }).ToListAsync();
     }
 

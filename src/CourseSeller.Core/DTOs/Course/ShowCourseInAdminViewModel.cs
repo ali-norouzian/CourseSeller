@@ -9,5 +9,7 @@
         public string ImageName { get; set; }
 
         public int EpisodeCount { get; set; }
+
+        public int StudentCount { get; set; }
     }
 }

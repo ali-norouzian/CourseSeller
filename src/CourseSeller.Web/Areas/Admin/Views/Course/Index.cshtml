@@ -30,6 +30,7 @@
                             <th>تصویر</th>
                             <th>عنوان دوره</th>
                             <th>تعداد جلسه</th>
+                            <th>تعداد دانشجو</th>
                             <th>دستورات</th>
                         </tr>
                     </thead>
@@ -45,6 +46,9 @@
                                 </td>
                                 <td>
                                     @item.EpisodeCount
+                                </td>
+                                <td>
+                                    @item.StudentCount
                                 </td>
                                 <td>
                                     <a asp-area="Admin" asp-controller="Course" asp-action="UpdateCourse" asp-route-Id="@item.CourseId" class="btn btn-warning btn-sm">
