@@ -3,7 +3,6 @@ using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Contexts;
 using CourseSeller.DataLayer.Entities.Courses;
 using CourseSeller.DataLayer.Entities.Orders;
-using CourseSeller.DataLayer.Entities.Users;
 using CourseSeller.DataLayer.Entities.Wallets;
 using Microsoft.EntityFrameworkCore;
 using static CourseSeller.Core.Services.UserPanelService;
@@ -243,5 +242,27 @@ public class OrderService : IOrderService
 
             return DiscountErrorType.Success;
         }
+    }
+
+    public async Task AddDiscount(Discount discount)
+    {
+        await _context.Discounts.AddAsync(discount);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Discount>> GetAllDiscount()
+    {
+        return await _context.Discounts.ToListAsync();
+    }
+
+    public async Task<Discount> GetDiscount(int discountId)
+    {
+        return await _context.Discounts.FindAsync(discountId);
+    }
+
+    public async Task UpdateDiscount(Discount discount)
+    {
+        _context.Discounts.Update(discount);
+        await _context.SaveChangesAsync();
     }
 }

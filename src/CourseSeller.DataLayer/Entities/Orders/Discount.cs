@@ -7,11 +7,13 @@ namespace CourseSeller.DataLayer.Entities.Orders
         [Key]
         public int DiscountId { get; set; }
 
-        [Required]
+        [Display(Name = "کد")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید.")]
         [MaxLength(100)]
         public string Code { get; set; }
 
-        [Required]
+        [Display(Name = "درصد تخفیف")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید.")]
         public int Percentage { get; set; }
 
         public int? UsableCount { get; set; }

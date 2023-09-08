@@ -17,7 +17,10 @@ public interface IOrderService
     #region Discount
 
     Task<DiscountErrorType> UserDiscount(int orderId, string code);
-
+    Task AddDiscount(Discount discount);
+    Task<List<Discount>> GetAllDiscount();
+    Task<Discount> GetDiscount(int discountId);
+    Task UpdateDiscount(Discount discount);
 
     #endregion
 
