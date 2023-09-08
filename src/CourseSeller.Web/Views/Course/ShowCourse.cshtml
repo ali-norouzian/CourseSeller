@@ -135,17 +135,17 @@
                     <div class="inner">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <form asp-controller="Course" asp-action="CreateComment"
+                            <form asp-controller="Course" asp-action="CreateComment" asp-route-courseId="@Model.CourseId"
                                   data-ajax="true"
                                   data-ajax-method="post"
                                   data-ajax-mode="replace"
-                                  data-ajax-update="#listComment"
+                                  data-ajax-update="#commentList"
                                   data-ajax-success="Success">
-                                <input type="hidden" name="comment.CourseId" value="@Model.CourseId" />
+                                <input type="hidden" name="CourseId" value="@Model.CourseId" />
                                 <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <div class="form-group">
-                                            <textarea class="form-control" id="comment_Comment" name="comment.Comment" placeholder="متن نظر"></textarea>
+                                            <textarea class="form-control" id="comment_Comment" name="Content" placeholder="متن نظر"></textarea>
                                         </div>
 
                                     </div>
@@ -162,7 +162,7 @@
                             </div>
                         }
 
-                        <div class="comment-list" id="listComment">
+                        <div class="comment-list" id="commentList">
                         </div>
                     </div>
                 </section>
@@ -252,25 +252,29 @@
     <script src="/js/jquery.unobtrusive-ajax.min.js"></script>
     <script>
         function Success() {
+            console.log(222222);
             $("#comment_Comment").val("");
         }
 
+        // Document.Ready
         $(function () {
-            $("#listComment").load("/Course/ShowComment/" + @Model.CourseId);
+            console.log(11111);
+            $("#commentList").load('/Course/@Model.CourseId/ListComments');
         });
 
         function pageComment(pageid) {
-            $("#listComment").load("/Course/ShowComment/" + @Model.CourseId+"?pageId=" + pageid);
+            $("#commentList").load("/Course/@Model.CourseId/ListComments/"+ pageid);
         }
 
-        $(function () {
-            $("#vot").load("/Course/CourseVote/@Model.CourseId");
-        });
+        // // Document.Ready
+        // $(function () {
+        //     $("#vot").load("/Course/CourseVote/@Model.CourseId");
+        // });
 
-        function vote(vote) {
-            $("#vot").fadeOut('slow');
-            $("#vot").load("/Course/AddVote/@(Model.CourseId)?vote=" + vote);
-            $("#vot").fadeIn('slow');
-        }
+        // function vote(vote) {
+        //     $("#vot").fadeOut('slow');
+        //     $("#vot").load("/Course/AddVote/@(Model.CourseId)?vote=" + vote);
+        //     $("#vot").fadeIn('slow');
+        // }
     </script>
 }

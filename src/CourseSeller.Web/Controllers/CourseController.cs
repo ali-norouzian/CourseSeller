@@ -1,7 +1,7 @@
 ﻿using CourseSeller.Core.Services.Interfaces;
+using CourseSeller.DataLayer.Entities.Courses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CourseSeller.Web.Areas.UserPanel.Controllers;
 using static CourseSeller.Core.Services.CourseService;
 
 namespace CourseSeller.Web.Controllers
@@ -70,6 +70,31 @@ namespace CourseSeller.Web.Controllers
             }
 
             return Forbid();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("[controller]/{courseId}/CreateComment")]
+        public async Task<IActionResult> CreateComment(Comment comment, int courseId)
+        {
+            comment.IsDelete = false;
+            comment.CreateDateTime = DateTime.Now;
+            comment.UserId = await _orderService.GetUserIdByUserName(User.Identity.Name);
+
+            await _courseService.CreateComment(comment);
+
+            var comments = await _courseService.GetCourseComment(courseId);
+
+            return View("ListComments", comments);
+        }
+
+        [Authorize]
+        [Route("[controller]/{courseId}/ListComments/{pageId?}")]
+        public async Task<IActionResult> ListComments(int courseId, int pageId = 1)
+        {
+            var comments = await _courseService.GetCourseComment(courseId, pageId);
+
+            return View("ListComments", comments);
         }
     }
 }

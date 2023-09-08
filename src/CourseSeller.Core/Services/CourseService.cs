@@ -446,4 +446,33 @@ public class CourseService : ICourseService
         _context.CourseEpisodes.Update(episode);
         await _context.SaveChangesAsync();
     }
+
+    public async Task CreateComment(Comment comment)
+    {
+        await _context.Comments.AddAsync(comment);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<(List<Comment>, int)> GetCourseComment(int courseId, int pageId = 1)
+    {
+        var take = 5;
+        var skip = (pageId - 1) * take;
+
+        var commentCounts = await _context.Comments
+            .Where(c => c.CourseId == courseId && c.IsDelete == false)
+            .CountAsync();
+
+        // For example: 14/5=2.8... but we need 3 pageination. so use cail
+        var pageCount = (int)(Math.Ceiling((double)commentCounts / take));
+
+        var comments = await _context.Comments
+            .Include(c => c.User)
+            .Where(c => c.CourseId == courseId && c.IsDelete == false)
+            .OrderByDescending(c => c.CreateDateTime)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync();
+
+        return (comments, pageCount);
+    }
 }

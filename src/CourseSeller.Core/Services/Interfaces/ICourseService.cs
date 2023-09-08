@@ -46,4 +46,12 @@ public interface ICourseService
 
     #endregion
 
+
+    #region Comment
+
+    Task CreateComment(Comment comment);
+    Task<(List<Comment>, int)> GetCourseComment(int courseId, int pageId = 1);
+
+    #endregion
+
 }
