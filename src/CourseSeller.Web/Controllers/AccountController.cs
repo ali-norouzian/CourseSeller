@@ -102,7 +102,7 @@ namespace CourseSeller.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginViewModel viewModel, [FromQuery] string ReturnUrl)
+        public async Task<IActionResult> Login(LoginViewModel viewModel, [FromQuery] string? ReturnUrl)
         {
             bool errorFlag = !ModelState.IsValid;
 
@@ -146,7 +146,7 @@ namespace CourseSeller.Web.Controllers
 
                 ViewData["IsSuccess"] = true;
 
-                ViewData["ReturnUrl"] = !string.IsNullOrEmpty(ReturnUrl)?ReturnUrl:"/UserPanel";
+                ViewData["ReturnUrl"] = !string.IsNullOrEmpty(ReturnUrl) ? ReturnUrl : "/UserPanel";
 
                 return View();
             }

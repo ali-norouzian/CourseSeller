@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace CourseSeller.DataLayer.Entities.Orders
 {
+    [Index(nameof(Code), IsUnique = true)]
     public class Discount
     {
         [Key]

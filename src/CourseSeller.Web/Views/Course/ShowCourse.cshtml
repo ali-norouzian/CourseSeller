@@ -1,8 +1,15 @@
 ﻿@using CourseSeller.Core.Convertors
+@using CourseSeller.Core.Services.Interfaces
 @model CourseSeller.DataLayer.Entities.Courses.Course
+@inject IOrderService _OrderService
 @{
     ViewData["Title"] = Model.CourseTitle;
 
+    var userHasCourse = false;
+
+    if (User.Identity.IsAuthenticated)
+        userHasCourse = await _OrderService.UserHasCourse(User.Identity.Name,Model.CourseId);
+    
 }
 
 @* @section MetaTag
@@ -27,7 +34,7 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#"> تاپ لرن </a></li>
+            <li class="breadcrumb-item"><a href="/"> @conf["SiteName"] </a></li>
             <li class="breadcrumb-item active"><a href="#"> دوره ها </a></li>
             <li class="breadcrumb-item active" aria-current="page"> @Model.CourseTitle </li>
         </ul>
@@ -196,7 +203,7 @@
                     <ul>
                         <li>سطح دوره: @Model.CourseStatus.StatusTitle</li>
                         <li>وضعیت دوره: @Model.CourseLevel.LevelTitle</li>
-                        @if (Model.CoursePrice != 0)
+                        @if (Model.CoursePrice != 0 && !userHasCourse)
                         {
                             <li>قیمت : @Model.CoursePrice.ToString("#,0") تومان</li>
                         }

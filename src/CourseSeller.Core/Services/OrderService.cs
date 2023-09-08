@@ -193,6 +193,13 @@ public class OrderService : IOrderService
             .ToListAsync();
     }
 
+    public async Task<bool> UserHasCourse(string userName, int courseId)
+    {
+        var userId = await GetUserIdByUserName(userName);
+        return await _context.UserCourses
+            .AnyAsync(u => u.UserId == userId && u.CourseId == courseId);
+    }
+
     public async Task<DiscountErrorType> UserDiscount(int orderId, string code)
     {
         // Single mean that we have not duplicated column of code
@@ -264,5 +271,10 @@ public class OrderService : IOrderService
     {
         _context.Discounts.Update(discount);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> IsExistDiscountCode(string discountCode)
+    {
+        return await _context.Discounts.AnyAsync(d => d.Code == discountCode);
     }
 }

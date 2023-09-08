@@ -12,6 +12,7 @@ public interface IOrderService
     Task UpdateOrder(Order order);
     Task<bool> FinishOrder(string userName, int orderId);
     Task<List<Order>> GetUserOrders(string userName);
+    Task<bool> UserHasCourse(string userName, int courseId);
 
 
     #region Discount
@@ -21,6 +22,7 @@ public interface IOrderService
     Task<List<Discount>> GetAllDiscount();
     Task<Discount> GetDiscount(int discountId);
     Task UpdateDiscount(Discount discount);
+    Task<bool> IsExistDiscountCode(string discountCode);
 
     #endregion
 

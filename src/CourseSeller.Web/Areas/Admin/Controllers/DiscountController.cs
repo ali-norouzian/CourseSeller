@@ -27,7 +27,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         {
             if (stDate == null || edDate == null)
                 return (null, null);
-            DateTime? StartDateTime=null, EndDateTime=null;
+            DateTime? StartDateTime = null, EndDateTime = null;
             if (!string.IsNullOrEmpty(stDate))
                 StartDateTime = stDate.ShamsiToGregorian();
 
@@ -49,7 +49,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         {
             (discount.StartDateTime, discount.EndDateTime) = await ConvertShamsiToGregorian(stDate, edDate);
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid && await _orderService.IsExistDiscountCode(discount.Code))
                 return View(discount);
 
             await _orderService.AddDiscount(discount);
@@ -70,12 +70,18 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         {
             (discount.StartDateTime, discount.EndDateTime) = await ConvertShamsiToGregorian(stDate, edDate);
 
-            if (!ModelState.IsValid)
-                return View("CreateDisount",discount);
+            if (!ModelState.IsValid && await _orderService.IsExistDiscountCode(discount.Code))
+                return View("CreateDisount", discount);
 
             await _orderService.UpdateDiscount(discount);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [Route("[area]/[controller]/CheckDiscountCodeIsExist/{discountCode}")]
+        public async Task<IActionResult> CheckDiscountCodeIsExist(string discountCode)
+        {
+            return Content((await _orderService.IsExistDiscountCode(discountCode)).ToString());
         }
     }
 }

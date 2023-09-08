@@ -32,7 +32,7 @@
             <label>کد تخفیف </label>
             <input type="text" asp-for="Code" class="form-control">
             <div id="alertCode" class="alert alert-danger" style="display: none">
-                <p class="text-muted">کد وارد شده معتبر نمی باشد</p>
+                <p class="">کد وارد شده معتبر نمی باشد یا تکراری است</p>
             </div>
         </div>
         <div class="form-group">
@@ -59,11 +59,12 @@
 @section Scripts
     {
     <script>
-        $("#Discount_DiscountCode").blur(function () {
+        // blur mean than when use leave input
+        $("#Code").blur(function () {
 
             $.ajax({
                 type: "get",
-                url: "/Admin/UserPanel/Discount/CreateDiscount/CheckCode?code=" + $("#Discount_DiscountCode").val()
+                url: "/Admin/Discount/CheckDiscountCodeIsExist/" + $("#Code").val()
             }).done(function (res) {
                 if (res === 'True') {
                     $("#alertCode").show();
