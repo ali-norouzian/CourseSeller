@@ -16,6 +16,9 @@ public interface ICourseService
     Task<SelectList> GetAllTeachers(string? selectedId = null);
     Task<SelectList> GetAllLevels(int? selectedId = null);
     Task<SelectList> GetAllStatus(int? selectedId = null);
+    Task AddGroup(CourseGroup group);
+    Task UpdateGroup(CourseGroup group);
+    Task<CourseGroup> GetGroup(int? groupId);
 
     #endregion
 

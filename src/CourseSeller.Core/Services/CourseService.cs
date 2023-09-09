@@ -35,7 +35,10 @@ public class CourseService : ICourseService
 
     public async Task<List<CourseGroup>> GetAllGroups()
     {
-        return await _context.CourseGroups.ToListAsync();
+        return await _context.CourseGroups
+            // To having subgroups that related:
+            .Include(c => c.CourseGroups)
+            .ToListAsync();
     }
 
     // It create select list for html
@@ -125,6 +128,23 @@ public class CourseService : ICourseService
         var selectList = new SelectList(selectListItems, "Value", "Text", selectedId);
 
         return selectList;
+    }
+
+    public async Task AddGroup(CourseGroup group)
+    {
+        await _context.CourseGroups.AddAsync(group);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateGroup(CourseGroup group)
+    {
+        _context.CourseGroups.Update(group);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<CourseGroup> GetGroup(int? groupId)
+    {
+        return await _context.CourseGroups.FindAsync(groupId);
     }
 
     public async Task<int> CreateCourse(Course course, IFormFile imgCourseUp, IFormFile demoUp)
