@@ -1,0 +1,17 @@
+﻿@model string
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>مشاهده @Model</title>
+</head>
+<body>
+<video style="width: 100%" controls >
+    <source src="/Courses/Episodes/@Model" />
+</video>
+</body>
+</html>

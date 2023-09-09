@@ -119,5 +119,24 @@ namespace CourseSeller.Web.Controllers
 
             return PartialView("Vote", await _courseService.GetCourseVote(courseId));
         }
+
+        [Route("[controller]/{courseId}/EpisodeVideo/{episodeId}")]
+        public async Task<IActionResult> EpisodeVideo(int courseId, int episodeId)
+        {
+            var episodeFileName = (await _courseService.GetEpisodeById(episodeId)).EpisodeFileName;
+
+            if (await _courseService.IsFree(courseId) ||
+                await _courseService.EpisodeIsFree(episodeId))
+                return View(model: episodeFileName);
+            if (User.Identity.IsAuthenticated)
+            {
+                if (await _orderService.UserHasCourse(User.Identity.Name, courseId))
+                {
+                    return View(model: episodeFileName);
+                }
+            }
+
+            return Forbid();
+        }
     }
 }

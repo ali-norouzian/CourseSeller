@@ -1,6 +1,5 @@
 ﻿using CourseSeller.Core.DTOs.Course;
 using CourseSeller.DataLayer.Entities.Courses;
-using CourseSeller.DataLayer.Migrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static CourseSeller.Core.Services.CourseService;
@@ -49,6 +48,7 @@ public interface ICourseService
     Task<bool> CheckExistFile(string fileName, string filePath = "wwwroot/Courses/Episodes");
     Task<CourseEpisode> GetEpisodeById(int id);
     Task UpdateEpisode(CourseEpisode episode, IFormFile episodeFile);
+    Task<bool> EpisodeIsFree(int episodeId);
 
     #endregion
 

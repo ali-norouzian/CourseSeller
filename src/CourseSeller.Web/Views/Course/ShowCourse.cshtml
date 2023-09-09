@@ -107,12 +107,14 @@
                                 else
                                 {
                                     <i> نقدی </i>
+                                    <a target="_blank" asp-action="EpisodeVideo" asp-route-courseId="@Model.CourseId" asp-route-episodeId="@item.EpisodeId">تماشا</a>
+
                                 }
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     if (item.IsFree)
                                     {
-                                        <a asp-action="ShowCourse" asp-route-courseId="@Model.CourseId" asp-route-episodeId="@item.EpisodeId">تماشا</a>
+                                        <a target="_blank" asp-action="EpisodeVideo" asp-route-courseId="@Model.CourseId" asp-route-episodeId="@item.EpisodeId">تماشا</a>
                                     }
 
                                 }

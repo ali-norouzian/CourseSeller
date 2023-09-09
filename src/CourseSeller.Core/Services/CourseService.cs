@@ -487,6 +487,11 @@ public class CourseService : ICourseService
         await _context.SaveChangesAsync();
     }
 
+    public async Task<bool> EpisodeIsFree(int episodeId)
+    {
+        return await _context.CourseEpisodes.AnyAsync(e => e.EpisodeId == episodeId && e.IsFree == true);
+    }
+
     public async Task CreateComment(Comment comment)
     {
         await _context.Comments.AddAsync(comment);
