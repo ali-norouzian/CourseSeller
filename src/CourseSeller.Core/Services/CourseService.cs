@@ -387,6 +387,26 @@ public class CourseService : ICourseService
         return await _context.UserCourses.CountAsync(c => c.CourseId == courseId);
     }
 
+    public async Task<List<ShowCourseForListViewModel>> GetMostPopularCourses()
+    {
+        var courses = await _context.Courses
+            .Include(c => c.OrderDetails)
+            .Include(c => c.CourseEpisodes)
+            .Where(c => c.OrderDetails.Any())
+            .OrderByDescending(c => c.OrderDetails.Count())
+            .Take(8)
+            .ToListAsync();
+
+        return courses.Select(c => new ShowCourseForListViewModel()
+        {
+            CourseId = c.CourseId,
+            ImageName = c.CourseImageName,
+            Price = c.CoursePrice,
+            Title = c.CourseTitle,
+            TotalTime = new TimeSpan(c.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks))
+        }).ToList();
+    }
+
 
     public async Task<List<CourseEpisode>> ListCourseEpisodes(int courseId)
     {

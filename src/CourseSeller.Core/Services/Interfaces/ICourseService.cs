@@ -32,6 +32,7 @@ public interface ICourseService
     Task<int> GetCountOfFilteredCourse(IQueryable<Course> q, int takeEachPage);
     Task<Course> GetCourseByForShowSingle(int courseId);
     Task<int> GetStudentsCountOfCourse(int courseId);
+    Task<List<ShowCourseForListViewModel>> GetMostPopularCourses();
 
     #endregion
 

@@ -14,6 +14,9 @@ namespace CourseSeller.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var popular = await _courseService.GetMostPopularCourses();
+            ViewData["PopularCourses"] = popular;
+
             return View(await _courseService.GetAllCourse());
         }
     }
