@@ -30,7 +30,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
         {
             var groups = await _courseService.GetGroupsForManageCourse(course?.GroupId);
             ViewData["Groups"] = groups;
-            var subGroups = await _courseService.GetSubGroupsForManageCourse(int.Parse(groups.First().Value), course?.SubGroupId);
+            var subGroups = await _courseService.GetSubGroupsForManageCourse(course.GroupId, course?.SubGroupId);
             ViewData["SubGroups"] = subGroups;
             var teachers = await _courseService.GetAllTeachers(course?.TeacherId);
             ViewData["Teachers"] = teachers;
