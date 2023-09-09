@@ -252,16 +252,15 @@
     <script src="/js/jquery.unobtrusive-ajax.min.js"></script>
     <script>
         function Success() {
-            console.log(222222);
             $("#comment_Comment").val("");
         }
 
         // Document.Ready
         $(function () {
-            console.log(11111);
             $("#commentList").load('/Course/@Model.CourseId/ListComments');
         });
 
+        // SSR (Server Side Rendering) comment section.
         function pageComment(pageid) {
             $("#commentList").load("/Course/@Model.CourseId/ListComments/"+ pageid);
         }

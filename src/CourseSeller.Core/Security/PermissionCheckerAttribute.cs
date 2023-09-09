@@ -32,6 +32,6 @@ public class PermissionCheckerAttribute : AuthorizeAttribute, IAsyncAuthorizatio
 
         var userName = context.HttpContext.User.Identity.Name;
         if (!await _permissionService.UserHasPermission(_permissionId, userName))
-            context.Result = new RedirectResult("/Account/Login");
+            context.Result = new RedirectResult($"/Account/Login?ReturnUrl={context.HttpContext.Request.Path}");
     }
 }
