@@ -9,8 +9,8 @@
     var userHasCourse = false;
 
     if (User.Identity.IsAuthenticated)
-        userHasCourse = await _OrderService.UserHasCourse(User.Identity.Name,Model.CourseId);
-    
+        userHasCourse = await _OrderService.UserHasCourse(User.Identity.Name, Model.CourseId);
+
 }
 
 @section MetaTags
@@ -52,7 +52,7 @@
                     <img src="/Courses/Images/@Model.CourseImageName">
 
                     @Html.Raw(Model.CourseDescription)
-                    
+
                     @if (!userHasCourse)
                     {
                         <p class="alert alert-info">بعد از ثبت نام در این دوره و تایید فاکتور لینک های دوره برای شما فعال خواهد شد.</p>
@@ -65,7 +65,7 @@
                         </video>
                     }
 
-                    <div id="vot">
+                    <div id="vote">
                     </div>
 
                     <h2> سرفصل های این دوره : </h2>
@@ -84,7 +84,7 @@
                         @foreach (var item in Model.CourseEpisodes)
                         {
                             <li>
-                                @if (item.IsFree||userHasCourse)
+                                @if (item.IsFree || userHasCourse)
                                 {
 
                                     <h3>
@@ -202,7 +202,7 @@
                     <ul>
                         <li>سطح دوره: @Model.CourseStatus.StatusTitle</li>
                         <li>وضعیت دوره: @Model.CourseLevel.LevelTitle</li>
-                        @if (Model.CoursePrice != 0 )
+                        @if (Model.CoursePrice != 0)
                         {
                             <li>قیمت : @Model.CoursePrice.ToString("#,0") تومان</li>
                         }
@@ -255,18 +255,18 @@
 
         // SSR (Server Side Rendering) comment section.
         function pageComment(pageid) {
-            $("#commentList").load("/Course/@Model.CourseId/ListComments/"+ pageid);
+            $("#commentList").load("/Course/@Model.CourseId/ListComments/" + pageid);
         }
 
-        // // Document.Ready
-        // $(function () {
-        //     $("#vot").load("/Course/CourseVote/@Model.CourseId");
-        // });
+        // Document.Ready
+        $(function () {
+            $("#vote").load("/Course/@Model.CourseId/Vote");
+        });
 
-        // function vote(vote) {
-        //     $("#vot").fadeOut('slow');
-        //     $("#vot").load("/Course/AddVote/@(Model.CourseId)?vote=" + vote);
-        //     $("#vot").fadeIn('slow');
-        // }
+        function vote(vote) {
+            $("#vote").fadeOut('slow');
+            $("#vote").load("/Course/@Model.CourseId/AddVote?vote=" + vote);
+            $("#vote").fadeIn('slow');
+        }
     </script>
 }

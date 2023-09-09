@@ -1,0 +1,26 @@
+﻿@model (int,int)
+
+@if (ViewData["AccessDeny"] == null)
+{
+    <style>
+    .likeDislikeBtn {
+        width: 22px !important;
+        float: right;
+        margin: 0 !important;
+        margin-left: 6px !important;
+    }
+</style>
+    <div class="row">
+        <p></p>
+        <p>
+            <a class="btn btn-success " id="like" onclick="vote(true)">
+                <img class="likeDislikeBtn" src="/images/like.png" />
+                میپسندم (@Model.Item1)
+            </a>
+            <a class="btn btn-danger " id="dislike" onclick="vote(false)">
+                <img class="likeDislikeBtn" src="/images/dislike.png" />
+                نمی پسندم (@Model.Item2)
+            </a>
+        </p>
+    </div>
+}

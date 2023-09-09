@@ -62,6 +62,7 @@ namespace CourseSeller.DataLayer.Contexts
         public DbSet<CourseEpisode> CourseEpisodes { get; set; }
         public DbSet<UserCourse> UserCourses { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<CourseVote> CourseVotes { get; set; }
 
         #endregion
 

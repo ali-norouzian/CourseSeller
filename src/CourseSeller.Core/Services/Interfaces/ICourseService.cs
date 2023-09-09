@@ -1,8 +1,10 @@
 ﻿using CourseSeller.Core.DTOs.Course;
 using CourseSeller.DataLayer.Entities.Courses;
+using CourseSeller.DataLayer.Migrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static CourseSeller.Core.Services.CourseService;
+using Comment = CourseSeller.DataLayer.Entities.Courses.Comment;
 
 namespace CourseSeller.Core.Services.Interfaces;
 
@@ -55,6 +57,15 @@ public interface ICourseService
 
     Task CreateComment(Comment comment);
     Task<(List<Comment>, int)> GetCourseComment(int courseId, int pageId = 1);
+
+    #endregion
+
+
+    #region Vote
+
+    Task CreateVote(string userId, int courseId, bool vote);
+    Task<(int, int)> GetCourseVote(int courseId);
+    Task<bool> IsFree(int courseId);
 
     #endregion
 

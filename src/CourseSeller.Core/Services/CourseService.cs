@@ -515,4 +515,44 @@ public class CourseService : ICourseService
 
         return (comments, pageCount);
     }
+
+    public async Task CreateVote(string userId, int courseId, bool vote)
+    {
+        var existedVote = await _context.CourseVotes
+            .FirstOrDefaultAsync(v => v.UserId == userId && v.CourseId == courseId);
+        // if it exist update it
+        if (existedVote != null)
+        {
+            existedVote.vote = vote;
+        }
+        else
+        {
+            existedVote = new CourseVote()
+            {
+                CourseId = courseId,
+                UserId = userId,
+                vote = vote,
+            };
+            await _context.AddAsync(existedVote);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<(int, int)> GetCourseVote(int courseId)
+    {
+        var vote = await _context.CourseVotes
+            .Where(v => v.CourseId == courseId)
+            .Select(v => v.vote)
+            .ToListAsync();
+
+        return (vote.Count(v => v), vote.Count(v => !v));
+    }
+
+    public async Task<bool> IsFree(int courseId)
+    {
+        return await _context.Courses
+            .AnyAsync(c => c.CourseId == courseId && c.CoursePrice == 0);
+
+    }
 }

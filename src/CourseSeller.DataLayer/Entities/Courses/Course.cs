@@ -84,5 +84,7 @@ public class Course
 
     public List<Comment> Comments { get; set; }
 
+    public List<CourseVote> CourseVotes { get; set; }
+
     #endregion
 }

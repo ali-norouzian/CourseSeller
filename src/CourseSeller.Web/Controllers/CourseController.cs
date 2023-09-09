@@ -88,6 +88,7 @@ namespace CourseSeller.Web.Controllers
             return View("ListComments", comments);
         }
 
+        // SSR Comment list with jquery
         [Authorize]
         [Route("[controller]/{courseId}/ListComments/{pageId?}")]
         public async Task<IActionResult> ListComments(int courseId, int pageId = 1)
@@ -95,6 +96,28 @@ namespace CourseSeller.Web.Controllers
             var comments = await _courseService.GetCourseComment(courseId, pageId);
 
             return View("ListComments", comments);
+        }
+
+        [Authorize]
+        [Route("[controller]/{courseId}/Vote")]
+        public async Task<IActionResult> Vote(int courseId)
+        {
+            if (!await _courseService.IsFree(courseId) &&
+                !await _orderService.UserHasCourse(User.Identity.Name, courseId))
+                ViewData["AccessDeny"] = true;
+
+            return PartialView(await _courseService.GetCourseVote(courseId));
+        }
+
+        [Authorize]
+        [Route("[controller]/{courseId}/AddVote")]
+        public async Task<IActionResult> CreateVote(int courseId, [FromQuery] bool vote)
+        {
+            await _courseService.CreateVote(
+                await _orderService.GetUserIdByUserName(User.Identity.Name),
+                courseId, vote);
+
+            return PartialView("Vote", await _courseService.GetCourseVote(courseId));
         }
     }
 }

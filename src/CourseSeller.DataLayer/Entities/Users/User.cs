@@ -62,6 +62,7 @@ namespace CourseSeller.DataLayer.Entities.Users
         public List<Order> Orders { get; set; }
         public List<UserCourse> UserCourses { get; set; }
         public List<Comment> Comments { get; set; }
+        public List<CourseVote> CourseVotes { get; set; }
 
         #endregion
     }
