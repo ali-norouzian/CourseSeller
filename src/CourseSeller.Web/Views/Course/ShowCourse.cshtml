@@ -68,15 +68,8 @@
                     <div id="vot">
                     </div>
 
-                    @* @if (!IsUserInCourse)
-                    {
-                    <div class="alert alert-info">
-                    <p>بعد از ثبت نام در این دوره و تایید فاکتور لینک های دانلود برای شما فعال خواهد شد</p>
-                    </div>
-                    } *@
-
                     <h2> سرفصل های این دوره : </h2>
-                    @* @if (ViewBag.Episode != null)
+                    @*@if (ViewBag.Episode != null)
                     {
                     CourseEpisode episode = ViewBag.Episode as CourseEpisode;
 
@@ -86,7 +79,7 @@
                     <video controls style="width: 100%">
                     <source src="@ViewBag.filePath" />
                     </video>
-                    } *@
+                    }*@
                     <ul>
                         @foreach (var item in Model.CourseEpisodes)
                         {
