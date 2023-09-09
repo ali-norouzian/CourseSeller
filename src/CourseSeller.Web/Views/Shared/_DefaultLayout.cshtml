@@ -5,6 +5,7 @@
     <title> @ViewData["Title"] | @conf["SiteName"] </title>
     <link rel="icon" href="/images/favicon.jpg">
     <partial name="_MetaTags" />
+    @await RenderSectionAsync("MetaTags", required: false)
     <partial name="_StyleTags" />
     <script src="/js/jquery.min.js"></script>
 

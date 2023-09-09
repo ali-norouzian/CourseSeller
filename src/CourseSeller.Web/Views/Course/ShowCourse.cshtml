@@ -13,15 +13,15 @@
     
 }
 
-@* @section MetaTag
+@section MetaTags
     {
     <meta name=googlebot content=index,follow>
     <meta name=robots content=noodp,noydir>
     <meta name=description content="شرح صفحه">
 
-    <meta property=og:site_name value="خودآموزش تاپ لرن">
+    <meta property=og:site_name value="خودآموزش @conf["SiteName"]">
     <meta property=og:title content="@Model.CourseTitle">
-    <meta property=og:url content="https://toplearn.com/ShowCourse/@Model.CourseTitle" />
+    <meta property=og:url content="@conf["DomainLink"]/Course/@Model.CourseId" />
     <meta property=og:image content="/Courses/Images/@Model.CourseImageName">
     <meta property=og:image:url content="/Courses/Images/@Model.CourseImageName" />
     <meta property=og:image:width content="700">
@@ -30,7 +30,7 @@
     <meta property=og:description content="">
     <meta property=og:price:currency content="IRR">
     <meta property=og:locale content="ir_FA">
-} *@
+}
 
 <div class="container">
     <nav aria-label="breadcrumb">
