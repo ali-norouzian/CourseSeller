@@ -1,12 +1,15 @@
-﻿using CourseSeller.Core.Services.Interfaces;
+﻿using CourseSeller.Core.Security;
+using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Entities.Courses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseSeller.Web.Areas.Admin.Controllers
 {
+
     [Authorize]
     [Area("Admin")]
+    [PermissionChecker(PermissionCheckerAttribute.CourseGroupManagement)]
     public class CourseGroupController : Controller
     {
         private readonly ICourseService _courseService;

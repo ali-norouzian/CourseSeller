@@ -1,4 +1,7 @@
-﻿
+﻿@using CourseSeller.Core.Services.Interfaces
+@inject IPermissionService _PermissionService
+@using static CourseSeller.Core.Security.PermissionCheckerAttribute
+@using CourseSeller.Core.Security
 <!DOCTYPE html>
 <html>
 
@@ -6,10 +9,10 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     @if (!ViewData.ContainsKey("Key"))
     {
-    // Add the default value to ViewData
+        // Add the default value to ViewData
         ViewData["Title"] = "پنل مدیریت";
     }
     <title>@ViewData["Title"] | @conf["SiteName"]</title>
@@ -67,18 +70,21 @@
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> مدیریت کاربران<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                @* @if (_PermissionService.CheckPermission(1002, User.Identity.Name))
-                                { *@
+                                @if (await _PermissionService.UserHasPermission(PermissionCheckerAttribute.RoleManagementId, User.Identity.Name))
+                                {
                                     <li>
-                                    <a asp-area="Admin" asp-controller="Role" asp-action="Index">دسترسی ها</a>
+                                        <a asp-area="Admin" asp-controller="Role" asp-action="Index">دسترسی ها</a>
                                     </li>
-                                @* } *@
-                                <li>
-                                    <a asp-area="Admin" asp-controller="User" asp-action="Users">کاربران</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Admin" asp-controller="User" asp-action="DeletedUsers"> کاربران حذف شده</a>
-                                </li>
+                                }
+                                @if (await _PermissionService.UserHasPermission(PermissionCheckerAttribute.UsersManagementId, User.Identity.Name))
+                                {
+                                    <li>
+                                        <a asp-area="Admin" asp-controller="User" asp-action="Users">کاربران</a>
+                                    </li>
+                                    <li>
+                                        <a asp-area="Admin" asp-controller="User" asp-action="DeletedUsers"> کاربران حذف شده</a>
+                                    </li>
+                                }
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
@@ -86,14 +92,23 @@
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> مدیریت دوره ها<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
+                                @if (await _PermissionService.UserHasPermission(PermissionCheckerAttribute.CourseManagement, User.Identity.Name))
+                                {
+                                    <li>
+                                        <a asp-area="Admin" asp-controller="Course" asp-action="Index">دوره ها</a>
+                                    </li>
+                                }
+                                @if (await _PermissionService.UserHasPermission(PermissionCheckerAttribute.DiscountManagement, User.Identity.Name))
+                                {
+                                    <li>
+                                        <a asp-area="Admin" asp-controller="Discount" asp-action="Index">تخفیف ها</a>
+                                    </li>
+                                }
                                 <li>
-                                    <a asp-area="Admin" asp-controller="Course" asp-action="Index">دوره ها</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Admin" asp-controller="Discount" asp-action="Index">تخفیف ها</a>
-                                </li>
-                                <li>
-                                    <a asp-area="Admin" asp-controller="CourseGroup" asp-action="Index"> گروه ها</a>
+                                    @if (await _PermissionService.UserHasPermission(PermissionCheckerAttribute.CourseGroupManagement, User.Identity.Name))
+                                    {
+                                        <a asp-area="Admin" asp-controller="CourseGroup" asp-action="Index"> گروه ها</a>
+                                    }
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

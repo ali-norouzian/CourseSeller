@@ -1,6 +1,6 @@
 ﻿using CourseSeller.Core.Convertors;
+using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
-using CourseSeller.DataLayer.Entities.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Discount = CourseSeller.DataLayer.Entities.Orders.Discount;
@@ -9,6 +9,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]
+    [PermissionChecker(PermissionCheckerAttribute.DiscountManagement)]
     public class DiscountController : Controller
     {
         private readonly IOrderService _orderService;

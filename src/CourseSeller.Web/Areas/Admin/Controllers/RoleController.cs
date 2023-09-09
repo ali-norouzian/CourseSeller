@@ -72,7 +72,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
             await _roleService.UpdateRole(viewModel);
             await _permissionService.UpdateRolePermission(viewModel.RoleID, selectedPermission);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(EditRole));
         }
 
         [PermissionChecker(PermissionCheckerAttribute.DeleteRoleId)]

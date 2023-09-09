@@ -1,7 +1,7 @@
 ﻿#nullable enable
+using CourseSeller.Core.Security;
 using CourseSeller.Core.Services.Interfaces;
 using CourseSeller.DataLayer.Entities.Courses;
-using CourseSeller.DataLayer.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +9,7 @@ namespace CourseSeller.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]
+    [PermissionChecker(PermissionCheckerAttribute.CourseManagement)]
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;

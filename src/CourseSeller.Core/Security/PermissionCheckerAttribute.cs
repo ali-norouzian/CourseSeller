@@ -17,6 +17,11 @@ public class PermissionCheckerAttribute : AuthorizeAttribute, IAsyncAuthorizatio
     public const byte EditRoleId = 8;
     public const byte DeleteRoleId = 9;
 
+    public const byte DiscountManagement = 10;
+    public const byte CourseManagement = 11;
+    public const byte CourseGroupManagement = 12;
+
+
     private readonly int _permissionId;
     private IPermissionService _permissionService;
 
