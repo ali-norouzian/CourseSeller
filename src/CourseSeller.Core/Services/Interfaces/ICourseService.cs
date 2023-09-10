@@ -37,6 +37,7 @@ public interface ICourseService
     Task<Course> GetCourseByForShowSingle(int courseId);
     Task<int> GetStudentsCountOfCourse(int courseId);
     Task<List<ShowCourseForListViewModel>> GetMostPopularCourses();
+    Task<List<string>> SearchByTitle(string q);
 
     #endregion
 

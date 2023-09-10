@@ -427,6 +427,14 @@ public class CourseService : ICourseService
         }).ToList();
     }
 
+    public async Task<List<string>> SearchByTitle(string q)
+    {
+        return await _context.Courses
+            .Where(c => c.CourseTitle.Contains(q))
+            .Select(c => c.CourseTitle)
+            .ToListAsync();
+    }
+
 
     public async Task<List<CourseEpisode>> ListCourseEpisodes(int courseId)
     {

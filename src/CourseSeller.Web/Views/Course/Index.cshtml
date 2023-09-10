@@ -11,7 +11,7 @@
     <nav aria-label="breadcrumb">
         <ul class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">@conf["SiteName"]</a></li>
-            <li class="breadcrumb-item active"><a href="#">دوره ها</a></li>
+            <li class="breadcrumb-item active"><a href="/Courses">دوره ها</a></li>
             <li class="breadcrumb-item active" aria-current="page"> برنامه نویسی وب </li>
         </ul>
     </nav>
@@ -26,15 +26,42 @@
             <div class="top-bar">
 
                 <header>
-                    <h1> دوره های <span> برنامه نویسی وب </span> </h1> <span> @(Model.Item2*1) دوره </span>
+                    <h1> دوره های <span> برنامه نویسی وب </span> </h1> <span> @(Model.Item2 * 1) دوره </span>
                 </header>
 
                 <div class="row">
                     <div class="col-md-4 col-sm-12 col-xs-12 pull-right">
                         <div class="input">
-                            <input type="text" name="filter" placeholder="موضوع مورد نظر ...">
+                            <input type="text" id="q" name="filter" placeholder="موضوع مورد نظر ...">
                             <button><i class="zmdi zmdi-search"></i></button>
                         </div>
+                        <script>
+
+
+                            $(document).ready
+                                (function () {
+                                    $("#q").autocomplete
+                                        ({
+                                            source: function (request, response) {
+                                                // request.term is the term searched for.
+                                                // response is the callback function you must call to update the autocomplete's
+                                                // suggestion list.
+                                                $.ajax({
+                                                    url: "/api/search",
+                                                    data: { q: request.term },
+                                                    dataType: "json",
+                                                    success: response,
+                                                    error: function () {
+                                                        response([]);
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                });
+
+
+                        </script>
                     </div>
                     <div class="col-md-4 col-sm-6 col-xs-12 pull-right">
                         <div class="switch-field available">
@@ -135,7 +162,7 @@
                                         if (periviousPage < 1)
                                             periviousPage = 1;
                                         var nextPage = pageId + 1;
-                                        if (Model.Item2<nextPage)
+                                        if (Model.Item2 < nextPage)
                                             nextPage = Model.Item2;
                                     }
                                     <li class="page-item ">
@@ -157,7 +184,7 @@
                             </nav>
 
                         }
-                        
+
                     </section>
 
                 </div>
@@ -173,7 +200,7 @@
 
         function changePage(pageid) {
             $("#pageid").val(pageid);
-            
+
             $("#formFilter").submit();
         }
 
