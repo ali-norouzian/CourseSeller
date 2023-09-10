@@ -44,10 +44,12 @@
 
             @if (popular != null)
             {
-                @foreach (var item in popular )
-                {
-                    <partial name="_CourseBox" model="@item"/>
-                }
+                <cache expires-after="TimeSpan.FromMinutes(1)">
+                    @foreach (var item in popular )
+                    {
+                        <partial name="_CourseBox" model="@item"/>
+                    }
+                </cache>
             }
 
         </section>
