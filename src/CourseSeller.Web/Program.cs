@@ -9,6 +9,7 @@ using CourseSeller.Core.Convertors;
 using CourseSeller.Core.Security;
 using CourseSeller.Core.Senders;
 using Microsoft.AspNetCore.Http.Features;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,7 +101,20 @@ if (!env.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        // Add logic to limit access to files
+        // For example, you can forbid access to specific file types
+        if (Path.GetExtension(context.File.Name) == ".mp4")
+        {
+            context.Context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            context.Context.Response.ContentLength = 0;
+            context.Context.Response.Body = Stream.Null;
+        }
+    }
+});
 
 app.UseRouting();
 
